@@ -227,10 +227,19 @@ public sealed class StarRuptureSaveModifierAdapter : ISaveModifierAdapter
         string savePath,
         CancellationToken ct = default)
     {
-        if (!File.Exists(savePath))
+        // Path traversal protection: ensure the path resolves to a .sav file
+        // within expected save directories. Reject suspicious paths.
+        var fullPath = Path.GetFullPath(savePath);
+        if (!fullPath.EndsWith(".sav", StringComparison.OrdinalIgnoreCase))
+            return Result<bool>.Failure("Only .sav files can be modified.");
+
+        if (fullPath.Contains("..", StringComparison.Ordinal))
+            return Result<bool>.Failure("Path traversal detected.");
+
+        if (!File.Exists(fullPath))
             return Result<bool>.Failure("Save file does not exist.");
 
-        var jsonResult = await ReadSaveJsonAsync(savePath, ct);
+        var jsonResult = await ReadSaveJsonAsync(fullPath, ct);
         if (jsonResult.IsFailure)
             return Result<bool>.Failure($"Save file is not readable: {jsonResult.Error}");
 
@@ -261,6 +270,40 @@ public sealed class StarRuptureSaveModifierAdapter : ISaveModifierAdapter
                 IsValid = false,
                 ValidationError = "Field not found in save file."
             };
+        }
+
+        // Validate numeric bounds for non-boolean fields
+        if (mod.FieldId != "crafting.unlockAll")
+        {
+            try
+            {
+                var intValue = Convert.ToInt32(mod.NewValue);
+                var (min, max) = GetFieldBounds(mod.FieldId);
+                if (intValue < min || intValue > max)
+                {
+                    return new FieldChangePreview
+                    {
+                        FieldId = mod.FieldId,
+                        DisplayName = mod.FieldId,
+                        OldValue = currentValue ?? "N/A",
+                        NewValue = mod.NewValue,
+                        IsValid = false,
+                        ValidationError = $"Value {intValue} is outside the allowed range [{min}–{max}]."
+                    };
+                }
+            }
+            catch (FormatException)
+            {
+                return new FieldChangePreview
+                {
+                    FieldId = mod.FieldId,
+                    DisplayName = mod.FieldId,
+                    OldValue = currentValue ?? "N/A",
+                    NewValue = mod.NewValue,
+                    IsValid = false,
+                    ValidationError = "Value is not a valid integer."
+                };
+            }
         }
 
         return new FieldChangePreview
@@ -321,6 +364,15 @@ public sealed class StarRuptureSaveModifierAdapter : ISaveModifierAdapter
 
     private bool ApplyFieldModification(JsonNode root, FieldModification mod)
     {
+        // Validate numeric bounds before applying any modification
+        if (mod.FieldId != "crafting.unlockAll")
+        {
+            var intValue = Convert.ToInt32(mod.NewValue);
+            var (min, max) = GetFieldBounds(mod.FieldId);
+            if (intValue < min || intValue > max)
+                return false;
+        }
+
         return mod.FieldId switch
         {
             "corporations.dataPoints" =>
@@ -342,6 +394,19 @@ public sealed class StarRuptureSaveModifierAdapter : ISaveModifierAdapter
                 SetCorpFieldValue(root, mod.FieldId, "currentXP", Convert.ToInt32(mod.NewValue)),
 
             _ => false
+        };
+    }
+
+    private static (int min, int max) GetFieldBounds(string fieldId)
+    {
+        return fieldId switch
+        {
+            "corporations.dataPoints" => (0, 999_999),
+            "corporations.inventorySlots" => (0, 60),
+            "corporations.featuresFlags" => (0, int.MaxValue),
+            _ when fieldId.StartsWith("corporations.") && fieldId.EndsWith(".level") => (0, 20),
+            _ when fieldId.StartsWith("corporations.") && fieldId.EndsWith(".xp") => (0, 999_999),
+            _ => (0, int.MaxValue)
         };
     }
 
@@ -466,7 +531,21 @@ public sealed class StarRuptureSaveModifierAdapter : ISaveModifierAdapter
                 await deflateStream.WriteAsync(jsonBytes, ct);
             }
 
-            await File.WriteAllBytesAsync(path, compressedStream.ToArray(), ct);
+            // Atomic write: write to temp file first, then rename.
+            // This prevents save corruption if the process crashes mid-write.
+            var tempPath = path + $".tmp_{Guid.NewGuid():N}";
+            try
+            {
+                await File.WriteAllBytesAsync(tempPath, compressedStream.ToArray(), ct);
+                File.Move(tempPath, path, overwrite: true);
+            }
+            catch
+            {
+                // Clean up temp file on failure
+                try { File.Delete(tempPath); } catch { /* best-effort cleanup */ }
+                throw;
+            }
+
             return Result<Unit>.Success(Unit.Value);
         }
         catch (Exception ex)

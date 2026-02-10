@@ -164,31 +164,44 @@ public sealed class LocalCapabilityStore : ICapabilityStore
 
     private byte[] Encrypt(byte[] plaintext)
     {
-        using var aes = Aes.Create();
-        aes.Key = _encryptionKey;
-        aes.GenerateIV();
+        // AES-GCM provides authenticated encryption: confidentiality + integrity
+        // in a single operation. Prevents padding oracle and ciphertext malleability.
+        var nonce = new byte[AesGcm.NonceByteSizes.MaxSize]; // 12 bytes
+        RandomNumberGenerator.Fill(nonce);
 
-        using var encryptor = aes.CreateEncryptor();
-        var ciphertext = encryptor.TransformFinalBlock(plaintext, 0, plaintext.Length);
+        var tag = new byte[AesGcm.TagByteSizes.MaxSize]; // 16 bytes
+        var ciphertext = new byte[plaintext.Length];
 
-        // Prepend IV to ciphertext
-        var result = new byte[aes.IV.Length + ciphertext.Length];
-        aes.IV.CopyTo(result, 0);
-        ciphertext.CopyTo(result, aes.IV.Length);
+        using var aesGcm = new AesGcm(_encryptionKey, tag.Length);
+        aesGcm.Encrypt(nonce, plaintext, ciphertext, tag);
+
+        // Wire format: [nonce (12)] [tag (16)] [ciphertext (N)]
+        var result = new byte[nonce.Length + tag.Length + ciphertext.Length];
+        nonce.CopyTo(result, 0);
+        tag.CopyTo(result, nonce.Length);
+        ciphertext.CopyTo(result, nonce.Length + tag.Length);
         return result;
     }
 
     private byte[] Decrypt(byte[] data)
     {
-        using var aes = Aes.Create();
-        aes.Key = _encryptionKey;
+        var nonceSize = AesGcm.NonceByteSizes.MaxSize; // 12
+        var tagSize = AesGcm.TagByteSizes.MaxSize;     // 16
 
-        var iv = new byte[aes.BlockSize / 8];
-        Array.Copy(data, 0, iv, 0, iv.Length);
-        aes.IV = iv;
+        if (data.Length < nonceSize + tagSize)
+            throw new CryptographicException("Encrypted data is too short — possible corruption or tampering.");
 
-        using var decryptor = aes.CreateDecryptor();
-        return decryptor.TransformFinalBlock(data, iv.Length, data.Length - iv.Length);
+        var nonce = data.AsSpan(0, nonceSize);
+        var tag = data.AsSpan(nonceSize, tagSize);
+        var ciphertext = data.AsSpan(nonceSize + tagSize);
+
+        var plaintext = new byte[ciphertext.Length];
+
+        using var aesGcm = new AesGcm(_encryptionKey, tagSize);
+        aesGcm.Decrypt(nonce, ciphertext, tag, plaintext);
+        // AesGcm.Decrypt throws CryptographicException if tag verification fails,
+        // which means the data was tampered with or the key is wrong.
+        return plaintext;
     }
 
     private static StoredCapability ToStoredCapability(Capability cap) => new()

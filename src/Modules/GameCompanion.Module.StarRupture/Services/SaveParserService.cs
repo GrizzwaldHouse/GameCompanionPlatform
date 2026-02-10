@@ -145,8 +145,12 @@ public sealed class SaveParserService
             foreach (var corp in corpsArray.EnumerateArray())
             {
                 var name = corp.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "";
-                var level = corp.TryGetProperty("currentLevel", out var l) ? l.GetInt32() : 0;
-                var xp = corp.TryGetProperty("currentXP", out var x) ? x.GetInt32() : 0;
+
+                // Save file uses "level" (not "currentLevel")
+                var level = corp.TryGetProperty("level", out var l) ? l.GetInt32() : 0;
+
+                // Save file uses "reputation" for XP towards next level (not "currentXP")
+                var xp = corp.TryGetProperty("reputation", out var r) ? r.GetInt32() : 0;
 
                 corporations.Add(new CorporationInfo
                 {

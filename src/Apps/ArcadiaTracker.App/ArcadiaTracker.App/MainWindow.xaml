@@ -10,7 +10,7 @@
         Height="800" Width="1200"
         MinHeight="600" MinWidth="900"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BackgroundBrush}">
+        Background="{StaticResource BackgroundGradientBrush}">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -122,6 +122,29 @@
                                  Style="{StaticResource NavButtonStyle}"
                                  Checked="NavItem_Checked"
                                  Tag="Settings"/>
+
+                    <!-- Premium Features (capability-gated: only visible when entitled) -->
+                    <Separator x:Name="PremiumSeparator" Margin="8,16"
+                               Background="{StaticResource SurfaceLightBrush}"
+                               Visibility="Collapsed"/>
+                    <RadioButton x:Name="NavSaveInspector"
+                                 Content="🔍 Save Inspector"
+                                 Style="{StaticResource PremiumNavButtonStyle}"
+                                 Checked="NavItem_Checked"
+                                 Tag="SaveInspector"
+                                 Visibility="Collapsed"/>
+                    <RadioButton x:Name="NavBackupManager"
+                                 Content="💾 Backup Manager"
+                                 Style="{StaticResource PremiumNavButtonStyle}"
+                                 Checked="NavItem_Checked"
+                                 Tag="BackupManager"
+                                 Visibility="Collapsed"/>
+                    <RadioButton x:Name="NavActivation"
+                                 Content="🔑 Activate Feature"
+                                 Style="{StaticResource NavButtonStyle}"
+                                 Checked="NavItem_Checked"
+                                 Tag="Activation"
+                                 Visibility="Collapsed"/>
                 </StackPanel>
 
                 <!-- Status Bar -->

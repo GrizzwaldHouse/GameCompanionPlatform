@@ -189,6 +189,13 @@ public partial class App : Application
         var adminProvider = new AdminCapabilityProvider(entitlementService, auditLogger, isProduction);
         services.AddSingleton(adminProvider);
 
+        // Activation code service (for code-based feature unlocking)
+        var activationService = new ActivationCodeService(
+            entitlementService,
+            auditLogger,
+            Path.Combine(EntitlementsDir, "redeemed.json"));
+        services.AddSingleton<IActivationCodeService>(activationService);
+
         // Save modification orchestrator (capability-gated at runtime)
         services.AddSingleton(sp =>
         {

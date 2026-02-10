@@ -1,9 +1,13 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using ArcadiaTracker.App.ViewModels;
 using ArcadiaTracker.App.Views;
+using GameCompanion.Engine.Entitlements.Capabilities;
+using GameCompanion.Engine.Entitlements.Interfaces;
+using GameCompanion.Engine.Entitlements.Services;
 using GameCompanion.Module.StarRupture.Models;
 using GameCompanion.Module.StarRupture.Services;
 
@@ -28,6 +32,11 @@ public partial class MainWindow : Window
     private readonly AchievementsView _achievementsView;
     private readonly NotificationsView _notificationsView;
 
+    // Premium views (created only when entitled)
+    private SaveInspectorView? _saveInspectorView;
+    private BackupManagerView? _backupManagerView;
+    private ActivationView? _activationView;
+
     // Phase 3 services
     private readonly CataclysmTimerService _cataclysmService;
     private readonly ProductionDataService _productionService;
@@ -41,8 +50,13 @@ public partial class MainWindow : Window
     private readonly SteamAchievementService _achievementService;
     private readonly NotificationService _notificationService;
 
+    // Entitlement services
+    private readonly CapabilityGatedPluginLoader _pluginLoader;
+
     // Track previous progress for notification comparison
     private PlayerProgress? _previousProgress;
+
+    private const string GameScope = "star_rupture";
 
     public MainWindow()
     {
@@ -64,6 +78,9 @@ public partial class MainWindow : Window
         _exportService = App.Services.GetRequiredService<ExportService>();
         _achievementService = App.Services.GetRequiredService<SteamAchievementService>();
         _notificationService = App.Services.GetRequiredService<NotificationService>();
+
+        // Entitlement services
+        _pluginLoader = App.Services.GetRequiredService<CapabilityGatedPluginLoader>();
 
         // Create views
         _dashboardView = new DashboardView();
@@ -223,6 +240,10 @@ public partial class MainWindow : Window
                 {
                     _settingsView.SetSavePath(newestSlot.SaveFilePath);
                     await UpdateSaveHealthAsync(newestSlot.SaveFilePath);
+
+                    // Update premium views if they exist
+                    _saveInspectorView?.UpdateFromSave(save, newestSlot.SaveFilePath);
+                    _backupManagerView?.SetSavePath(newestSlot.SaveFilePath);
                 }
 
                 // Phase 4: Play statistics
@@ -248,8 +269,59 @@ public partial class MainWindow : Window
             await _notificationService.LoadHistoryAsync();
             _notificationsView.UpdateNotifications(_notificationService.GetNotifications());
 
+            // Check entitlements and show premium nav items
+            await InitializePremiumFeatures();
+
             await _viewModel.InitializeCommand.ExecuteAsync(null);
         };
+    }
+
+    /// <summary>
+    /// Checks entitlements and conditionally shows premium nav items.
+    /// Premium views are only created if the user has valid capabilities,
+    /// ensuring non-discoverability for non-paying users.
+    /// </summary>
+    private async Task InitializePremiumFeatures()
+    {
+        var hasPremium = false;
+
+        // Check Save Inspector capability
+        if (await _pluginLoader.HasCapabilityAsync(CapabilityActions.SaveInspect, GameScope))
+        {
+            _saveInspectorView = new SaveInspectorView();
+            NavSaveInspector.Visibility = Visibility.Visible;
+            hasPremium = true;
+        }
+
+        // Check Backup Manager capability
+        if (await _pluginLoader.HasCapabilityAsync(CapabilityActions.BackupManage, GameScope))
+        {
+            _backupManagerView = new BackupManagerView();
+            _backupManagerView.Initialize(_saveHealthService);
+            NavBackupManager.Visibility = Visibility.Visible;
+            hasPremium = true;
+        }
+
+        // Always show activation view (it's the entry point for getting premium features)
+        // but only when running in a mode where activation is possible
+        _activationView = new ActivationView();
+        var activationService = App.Services.GetService<IActivationCodeService>();
+        var entitlementService = App.Services.GetRequiredService<IEntitlementService>();
+        if (activationService != null)
+        {
+            _activationView.Initialize(activationService, entitlementService, GameScope);
+            _activationView.FeaturesActivated += async (s, e) =>
+            {
+                // Re-evaluate premium nav items after activation
+                await InitializePremiumFeatures();
+            };
+        }
+        NavActivation.Visibility = Visibility.Visible;
+
+        // Show premium separator if any premium features are unlocked
+        PremiumSeparator.Visibility = hasPremium
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 
     private async Task UpdateSaveHealthAsync(string savePath)
@@ -263,9 +335,9 @@ public partial class MainWindow : Window
     {
         if (sender is RadioButton rb && rb.Tag is string tag)
         {
-            ContentArea.Content = tag switch
+            var newContent = tag switch
             {
-                "Dashboard" => _dashboardView,
+                "Dashboard" => (object)_dashboardView,
                 "Progression" => _progressionView,
                 "Map" => _nativeMapView,
                 "Roadmap" => _roadmapView,
@@ -277,8 +349,22 @@ public partial class MainWindow : Window
                 "Export" => _exportView,
                 "Notifications" => _notificationsView,
                 "Settings" => _settingsView,
+                // Premium views
+                "SaveInspector" => (object?)_saveInspectorView ?? _dashboardView,
+                "BackupManager" => (object?)_backupManagerView ?? _dashboardView,
+                "Activation" => (object?)_activationView ?? _dashboardView,
                 _ => _dashboardView
             };
+
+            ContentArea.Content = newContent;
+
+            // Apply view transition animation
+            if (newContent is UIElement element)
+            {
+                element.RenderTransform = new System.Windows.Media.TranslateTransform();
+                var storyboard = (Storyboard?)TryFindResource("ViewFadeInStoryboard");
+                storyboard?.Begin(element);
+            }
         }
     }
 }

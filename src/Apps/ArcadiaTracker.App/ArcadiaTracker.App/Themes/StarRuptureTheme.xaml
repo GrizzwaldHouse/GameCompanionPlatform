@@ -4,48 +4,133 @@
     <!-- Converters -->
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
-    <!-- Sci-Fi Color Palette -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Sci-Fi Color Palette (Extended)                -->
+    <!-- ═══════════════════════════════════════════════ -->
     <Color x:Key="PrimaryColor">#00D4FF</Color>
+    <Color x:Key="PrimaryGlowColor">#4000D4FF</Color>
     <Color x:Key="SecondaryColor">#8B5CF6</Color>
+    <Color x:Key="SecondaryGlowColor">#408B5CF6</Color>
     <Color x:Key="BackgroundColor">#0A0A0F</Color>
+    <Color x:Key="BackgroundGradientEnd">#0F0F1A</Color>
     <Color x:Key="SurfaceColor">#1A1A2E</Color>
+    <Color x:Key="SurfaceHoverColor">#222240</Color>
+    <Color x:Key="SurfaceActiveColor">#2A2A50</Color>
     <Color x:Key="SurfaceLightColor">#2A2A3E</Color>
     <Color x:Key="ErrorColor">#FF4757</Color>
     <Color x:Key="SuccessColor">#2ED573</Color>
     <Color x:Key="WarningColor">#FF6B35</Color>
+    <Color x:Key="AccentGoldColor">#FFD700</Color>
+    <Color x:Key="AccentGoldGlowColor">#40FFD700</Color>
     <Color x:Key="TextPrimaryColor">#FFFFFF</Color>
     <Color x:Key="TextSecondaryColor">#A0A0B0</Color>
     <Color x:Key="TextMutedColor">#606070</Color>
 
     <!-- Brushes -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+    <SolidColorBrush x:Key="PrimaryGlowBrush" Color="{StaticResource PrimaryGlowColor}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}"/>
+    <SolidColorBrush x:Key="SecondaryGlowBrush" Color="{StaticResource SecondaryGlowColor}"/>
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}"/>
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="{StaticResource SurfaceHoverColor}"/>
+    <SolidColorBrush x:Key="SurfaceActiveBrush" Color="{StaticResource SurfaceActiveColor}"/>
     <SolidColorBrush x:Key="SurfaceLightBrush" Color="{StaticResource SurfaceLightColor}"/>
     <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
     <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
     <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="AccentGoldBrush" Color="{StaticResource AccentGoldColor}"/>
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}"/>
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}"/>
     <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}"/>
 
-    <!-- Window Style -->
+    <!-- Background gradient for main window -->
+    <LinearGradientBrush x:Key="BackgroundGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource BackgroundColor}" Offset="0"/>
+        <GradientStop Color="{StaticResource BackgroundGradientEnd}" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Glow shadow effects -->
+    <DropShadowEffect x:Key="PrimaryGlowEffect"
+                      Color="{StaticResource PrimaryColor}"
+                      ShadowDepth="0" BlurRadius="10" Opacity="0.4"/>
+    <DropShadowEffect x:Key="SecondaryGlowEffect"
+                      Color="{StaticResource SecondaryColor}"
+                      ShadowDepth="0" BlurRadius="10" Opacity="0.4"/>
+    <DropShadowEffect x:Key="GoldGlowEffect"
+                      Color="{StaticResource AccentGoldColor}"
+                      ShadowDepth="0" BlurRadius="10" Opacity="0.4"/>
+    <DropShadowEffect x:Key="CardShadowEffect"
+                      Color="#000000" ShadowDepth="2" BlurRadius="8" Opacity="0.3"/>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- View Transition Storyboard                     -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <Storyboard x:Key="ViewFadeInStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                         From="0" To="1" Duration="0:0:0.3">
+            <DoubleAnimation.EasingFunction>
+                <QuadraticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                         From="12" To="0" Duration="0:0:0.3">
+            <DoubleAnimation.EasingFunction>
+                <QuadraticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+    </Storyboard>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Window Style                                   -->
+    <!-- ═══════════════════════════════════════════════ -->
     <Style TargetType="Window">
-        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+        <Setter Property="Background" Value="{StaticResource BackgroundGradientBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
     </Style>
 
-    <!-- Card Style -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Card Style (Enhanced with hover and shadow)    -->
+    <!-- ═══════════════════════════════════════════════ -->
     <Style x:Key="CardStyle" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="16"/>
         <Setter Property="Margin" Value="8"/>
+        <Setter Property="Effect" Value="{StaticResource CardShadowEffect}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
-    <!-- Primary Button Style -->
+    <!-- Stat card with glow highlight for key numbers -->
+    <Style x:Key="StatCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryGlowBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Premium feature card (gold accent) -->
+    <Style x:Key="PremiumCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource AccentGoldBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Primary Button Style (Enhanced with glow)      -->
+    <!-- ═══════════════════════════════════════════════ -->
     <Style x:Key="PrimaryButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource BackgroundBrush}"/>
@@ -56,22 +141,27 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}"
-                            CornerRadius="4"
+                    <Border x:Name="ButtonBorder"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="6"
                             Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Effect"
+                                    Value="{StaticResource PrimaryGlowEffect}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Opacity" Value="0.85"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Opacity" Value="0.9"/>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Opacity" Value="0.8"/>
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <!-- Secondary Button Style -->
@@ -86,19 +176,31 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}"
+                    <Border x:Name="ButtonBorder"
+                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4"
+                            CornerRadius="6"
                             Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background"
+                                    Value="{StaticResource PrimaryGlowBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- Progress Bar Style -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Progress Bar Style (Enhanced with animation)   -->
+    <!-- ═══════════════════════════════════════════════ -->
     <Style x:Key="SciFiProgressBar" TargetType="ProgressBar">
         <Setter Property="Background" Value="{StaticResource SurfaceLightBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
@@ -112,27 +214,43 @@
                         <Border x:Name="PART_Indicator"
                                 Background="{TemplateBinding Foreground}"
                                 CornerRadius="4"
-                                HorizontalAlignment="Left"/>
+                                HorizontalAlignment="Left">
+                            <Border.Effect>
+                                <DropShadowEffect Color="{StaticResource PrimaryColor}"
+                                                  ShadowDepth="0" BlurRadius="6" Opacity="0.5"/>
+                            </Border.Effect>
+                        </Border>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- Header Text Style -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Text Styles                                    -->
+    <!-- ═══════════════════════════════════════════════ -->
     <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
     </Style>
 
-    <!-- Subheader Text Style -->
     <Style x:Key="SubheaderTextStyle" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
         <Setter Property="FontSize" Value="14"/>
     </Style>
 
-    <!-- Badge Styles -->
+    <!-- Glowing stat number (for key dashboard figures) -->
+    <Style x:Key="GlowStatTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Effect" Value="{StaticResource PrimaryGlowEffect}"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Badge Styles (with rarity glow)                -->
+    <!-- ═══════════════════════════════════════════════ -->
     <Style x:Key="BadgeCommonStyle" TargetType="Border">
         <Setter Property="Background" Value="#3D5A80"/>
         <Setter Property="CornerRadius" Value="12"/>
@@ -155,15 +273,19 @@
         <Setter Property="Background" Value="#8B5CF6"/>
         <Setter Property="CornerRadius" Value="12"/>
         <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="Effect" Value="{StaticResource SecondaryGlowEffect}"/>
     </Style>
 
     <Style x:Key="BadgeLegendaryStyle" TargetType="Border">
         <Setter Property="Background" Value="#FFD700"/>
         <Setter Property="CornerRadius" Value="12"/>
         <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="Effect" Value="{StaticResource GoldGlowEffect}"/>
     </Style>
 
-    <!-- Navigation Button Style -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Navigation Button Style (Enhanced with bar)    -->
+    <!-- ═══════════════════════════════════════════════ -->
     <Style x:Key="NavButtonStyle" TargetType="RadioButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
@@ -176,8 +298,9 @@
                     <Border x:Name="border"
                             Background="{TemplateBinding Background}"
                             Padding="{TemplateBinding Padding}"
-                            BorderThickness="0,0,0,2"
-                            BorderBrush="Transparent">
+                            BorderThickness="3,0,0,0"
+                            BorderBrush="Transparent"
+                            CornerRadius="0,4,4,0">
                         <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -185,6 +308,35 @@
                             <Setter TargetName="border" Property="Background" Value="{StaticResource SurfaceLightBrush}"/>
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
                             <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource SurfaceBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Premium nav button (gold accent when active) -->
+    <Style x:Key="PremiumNavButtonStyle" TargetType="RadioButton"
+           BasedOn="{StaticResource NavButtonStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            BorderThickness="3,0,0,0"
+                            BorderBrush="Transparent"
+                            CornerRadius="0,4,4,0">
+                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#1A2A2A3E"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentGoldBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource AccentGoldBrush}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="Background" Value="{StaticResource SurfaceBrush}"/>

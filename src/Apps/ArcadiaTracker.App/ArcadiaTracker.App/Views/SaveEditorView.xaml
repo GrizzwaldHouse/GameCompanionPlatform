@@ -1,0 +1,194 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.SaveEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Save Editor" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="Modify your local save data safely — a backup is always created before changes"
+                       Style="{StaticResource SubheaderTextStyle}" TextWrapping="Wrap" Margin="0,0,0,24"/>
+
+            <!-- Consent Banner (shown on first use) -->
+            <Border x:Name="ConsentBanner" Style="{StaticResource PremiumCardStyle}"
+                    Margin="0,0,0,16" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="Before You Continue" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource AccentGoldBrush}" Margin="0,0,0,12"/>
+                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"
+                               LineHeight="20">
+                        <Run Text="This tool modifies your local, single-player save file."/>
+                        <LineBreak/>
+                        <Run Text="You're always in control. Nothing is changed automatically, and a backup is created before any edits are applied."/>
+                        <LineBreak/><LineBreak/>
+                        <Run Text="A few things to keep in mind:"/>
+                        <LineBreak/>
+                        <Run Text="  • Use only with saves you own"/>
+                        <LineBreak/>
+                        <Run Text="  • Some games may not support modified saves"/>
+                        <LineBreak/>
+                        <Run Text="  • Online or competitive modes are not supported"/>
+                        <LineBreak/><LineBreak/>
+                        <Run Text="A backup will be created automatically before any changes are made."/>
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                        <Button x:Name="ConsentAcceptButton" Content="Continue"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Click="ConsentAcceptButton_Click"/>
+                        <Button x:Name="ConsentDeclineButton" Content="Cancel"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Margin="12,0,0,0"
+                                Click="ConsentDeclineButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Editor Panel (hidden until consent given) -->
+            <StackPanel x:Name="EditorPanel" Visibility="Collapsed">
+
+                <!-- Save File Selector -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="SAVE FILE" FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBlock x:Name="SaveFilePathText" Text="No save loaded"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       FontWeight="SemiBold" Margin="0,4,0,0"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" x:Name="LoadFieldsButton"
+                                Content="Load Fields"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Click="LoadFieldsButton_Click"/>
+                    </Grid>
+                </Border>
+
+                <!-- Modifiable Fields -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Modifiable Fields" FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                        <ItemsControl x:Name="FieldsList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="12,10" CornerRadius="8"
+                                            Background="{StaticResource SurfaceLightBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="120"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding DisplayName}"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                                           FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding Description}"
+                                                           Foreground="{StaticResource TextMutedBrush}"
+                                                           FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="Current" FontSize="9"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding CurrentValueDisplay}"
+                                                           Foreground="{StaticResource PrimaryBrush}"
+                                                           FontWeight="Bold"/>
+                                            </StackPanel>
+                                            <TextBox Grid.Column="2" VerticalAlignment="Center"
+                                                     Text="{Binding NewValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     Background="{StaticResource SurfaceBrush}"
+                                                     Foreground="{StaticResource TextPrimaryBrush}"
+                                                     BorderBrush="{StaticResource PrimaryBrush}"
+                                                     BorderThickness="1" Padding="8,4"
+                                                     CaretBrush="{StaticResource PrimaryBrush}"/>
+                                            <!-- Risk indicator -->
+                                            <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="0,4,0,0">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Category}"
+                                                               FontSize="10"
+                                                               Foreground="{StaticResource TextMutedBrush}"
+                                                               Margin="0,0,12,0"/>
+                                                    <TextBlock Text="{Binding RiskDisplay}"
+                                                               FontSize="10"
+                                                               Foreground="{Binding RiskColor}"/>
+                                                    <TextBlock Text="{Binding BoundsDisplay}"
+                                                               FontSize="10"
+                                                               Foreground="{StaticResource TextMutedBrush}"
+                                                               Margin="12,0,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock x:Name="NoFieldsText"
+                                   Text="Load a save to see editable fields."
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   HorizontalAlignment="Center" Margin="0,8"
+                                   Visibility="Visible"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Preview & Apply -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <Button x:Name="PreviewButton" Content="Preview Changes"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Click="PreviewButton_Click" IsEnabled="False"/>
+                            <Button x:Name="ApplyButton" Content="Apply && Backup"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Click="ApplyButton_Click" IsEnabled="False"
+                                    Margin="12,0,0,0"/>
+                        </StackPanel>
+
+                        <!-- Preview results -->
+                        <ItemsControl x:Name="PreviewList" Visibility="Collapsed">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                        <TextBlock Text="{Binding StatusIcon}" FontSize="12"
+                                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding FieldId}"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   FontSize="12" MinWidth="200"/>
+                                        <TextBlock Text="{Binding OldValue}"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   FontSize="12"/>
+                                        <TextBlock Text=" → " Foreground="{StaticResource TextMutedBrush}"
+                                                   FontSize="12"/>
+                                        <TextBlock Text="{Binding NewValue}"
+                                                   Foreground="{StaticResource PrimaryBrush}"
+                                                   FontSize="12" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Status message -->
+                        <Border x:Name="EditorStatusBorder" Margin="0,8,0,0"
+                                Padding="12,8" CornerRadius="6" Visibility="Collapsed">
+                            <TextBlock x:Name="EditorStatusText" FontSize="13" TextWrapping="Wrap"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

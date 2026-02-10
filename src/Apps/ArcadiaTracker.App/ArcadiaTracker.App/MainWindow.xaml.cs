@@ -8,6 +8,8 @@ using ArcadiaTracker.App.Views;
 using GameCompanion.Engine.Entitlements.Capabilities;
 using GameCompanion.Engine.Entitlements.Interfaces;
 using GameCompanion.Engine.Entitlements.Services;
+using GameCompanion.Module.SaveModifier.Interfaces;
+using GameCompanion.Module.SaveModifier.Services;
 using GameCompanion.Module.StarRupture.Models;
 using GameCompanion.Module.StarRupture.Services;
 
@@ -33,9 +35,11 @@ public partial class MainWindow : Window
     private readonly NotificationsView _notificationsView;
 
     // Premium views (created only when entitled)
+    private SaveEditorView? _saveEditorView;
     private SaveInspectorView? _saveInspectorView;
     private BackupManagerView? _backupManagerView;
     private ActivationView? _activationView;
+    private AdminPanelView? _adminPanelView;
 
     // Phase 3 services
     private readonly CataclysmTimerService _cataclysmService;
@@ -242,6 +246,7 @@ public partial class MainWindow : Window
                     await UpdateSaveHealthAsync(newestSlot.SaveFilePath);
 
                     // Update premium views if they exist
+                    _saveEditorView?.SetSavePath(newestSlot.SaveFilePath);
                     _saveInspectorView?.UpdateFromSave(save, newestSlot.SaveFilePath);
                     _backupManagerView?.SetSavePath(newestSlot.SaveFilePath);
                 }
@@ -284,11 +289,28 @@ public partial class MainWindow : Window
     private async Task InitializePremiumFeatures()
     {
         var hasPremium = false;
+        var entitlementService = App.Services.GetRequiredService<IEntitlementService>();
+        var activationService = App.Services.GetService<IActivationCodeService>();
+
+        // Check Save Editor capability (core paid feature)
+        if (await _pluginLoader.HasCapabilityAsync(CapabilityActions.SaveModify, GameScope))
+        {
+            if (_saveEditorView == null)
+            {
+                _saveEditorView = new SaveEditorView();
+                var orchestrator = App.Services.GetRequiredService<SaveModificationOrchestrator>();
+                var consentService = App.Services.GetRequiredService<IConsentService>();
+                var adapter = App.Services.GetRequiredService<ISaveModifierAdapter>();
+                _saveEditorView.Initialize(orchestrator, consentService, adapter);
+            }
+            NavSaveEditor.Visibility = Visibility.Visible;
+            hasPremium = true;
+        }
 
         // Check Save Inspector capability
         if (await _pluginLoader.HasCapabilityAsync(CapabilityActions.SaveInspect, GameScope))
         {
-            _saveInspectorView = new SaveInspectorView();
+            _saveInspectorView ??= new SaveInspectorView();
             NavSaveInspector.Visibility = Visibility.Visible;
             hasPremium = true;
         }
@@ -296,27 +318,47 @@ public partial class MainWindow : Window
         // Check Backup Manager capability
         if (await _pluginLoader.HasCapabilityAsync(CapabilityActions.BackupManage, GameScope))
         {
-            _backupManagerView = new BackupManagerView();
-            _backupManagerView.Initialize(_saveHealthService);
+            if (_backupManagerView == null)
+            {
+                _backupManagerView = new BackupManagerView();
+                _backupManagerView.Initialize(_saveHealthService);
+            }
             NavBackupManager.Visibility = Visibility.Visible;
             hasPremium = true;
         }
 
-        // Always show activation view (it's the entry point for getting premium features)
-        // but only when running in a mode where activation is possible
-        _activationView = new ActivationView();
-        var activationService = App.Services.GetService<IActivationCodeService>();
-        var entitlementService = App.Services.GetRequiredService<IEntitlementService>();
-        if (activationService != null)
+        // Always show activation view (entry point for getting premium features)
+        if (_activationView == null)
         {
-            _activationView.Initialize(activationService, entitlementService, GameScope);
-            _activationView.FeaturesActivated += async (s, e) =>
+            _activationView = new ActivationView();
+            if (activationService != null)
             {
-                // Re-evaluate premium nav items after activation
-                await InitializePremiumFeatures();
-            };
+                _activationView.Initialize(activationService, entitlementService, GameScope);
+                _activationView.FeaturesActivated += async (s, e) =>
+                {
+                    // Re-evaluate premium nav items after activation
+                    await InitializePremiumFeatures();
+                };
+            }
         }
         NavActivation.Visibility = Visibility.Visible;
+
+        // Admin panel: only in DEBUG builds with admin capabilities
+        var adminProvider = App.Services.GetRequiredService<AdminCapabilityProvider>();
+        if (await adminProvider.HasAdminOverrideAsync(GameScope))
+        {
+            if (_adminPanelView == null)
+            {
+                _adminPanelView = new AdminPanelView();
+                var auditLogger = App.Services.GetRequiredService<LocalAuditLogger>();
+                _adminPanelView.Initialize(activationService!, entitlementService, auditLogger, GameScope);
+                _adminPanelView.FeaturesActivated += async (s, e) =>
+                {
+                    await InitializePremiumFeatures();
+                };
+            }
+            NavAdminPanel.Visibility = Visibility.Visible;
+        }
 
         // Show premium separator if any premium features are unlocked
         PremiumSeparator.Visibility = hasPremium
@@ -350,9 +392,11 @@ public partial class MainWindow : Window
                 "Notifications" => _notificationsView,
                 "Settings" => _settingsView,
                 // Premium views
+                "SaveEditor" => (object?)_saveEditorView ?? _dashboardView,
                 "SaveInspector" => (object?)_saveInspectorView ?? _dashboardView,
                 "BackupManager" => (object?)_backupManagerView ?? _dashboardView,
                 "Activation" => (object?)_activationView ?? _dashboardView,
+                "AdminPanel" => (object?)_adminPanelView ?? _dashboardView,
                 _ => _dashboardView
             };
 

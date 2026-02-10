@@ -72,11 +72,12 @@ public sealed class AdminCapabilityProvider
         if (issueResult.IsFailure)
             return Result<bool>.Failure(issueResult.Error!);
 
-        // Also grant standard save modify/inspect for testing
-        await _entitlementService.GrantCapabilityAsync(
-            CapabilityActions.SaveModify, scope, TimeSpan.FromHours(8), ct);
-        await _entitlementService.GrantCapabilityAsync(
-            CapabilityActions.SaveInspect, scope, TimeSpan.FromHours(8), ct);
+        // Grant all paid capabilities for admin testing and management
+        foreach (var action in CapabilityActions.GetAllPaidActions())
+        {
+            await _entitlementService.GrantCapabilityAsync(
+                action, scope, TimeSpan.FromHours(8), ct);
+        }
 
         // Audit the injection
         await _auditLogger.LogAsync(new AuditEntry
@@ -85,7 +86,7 @@ public sealed class AdminCapabilityProvider
             Action = "admin.inject",
             CapabilityId = CapabilityActions.AdminCapabilityIssue,
             GameScope = scope,
-            Detail = "Admin capabilities injected via environment configuration.",
+            Detail = $"Admin capabilities injected via environment configuration. Granted {CapabilityActions.GetAllPaidActions().Count + 2} capabilities for scope '{scope}'.",
             Outcome = AuditOutcome.Success
         }, ct);
 

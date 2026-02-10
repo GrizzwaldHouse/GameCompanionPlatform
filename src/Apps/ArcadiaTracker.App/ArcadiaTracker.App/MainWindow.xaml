@@ -127,6 +127,12 @@
                     <Separator x:Name="PremiumSeparator" Margin="8,16"
                                Background="{StaticResource SurfaceLightBrush}"
                                Visibility="Collapsed"/>
+                    <RadioButton x:Name="NavSaveEditor"
+                                 Content="✏️ Save Editor"
+                                 Style="{StaticResource PremiumNavButtonStyle}"
+                                 Checked="NavItem_Checked"
+                                 Tag="SaveEditor"
+                                 Visibility="Collapsed"/>
                     <RadioButton x:Name="NavSaveInspector"
                                  Content="🔍 Save Inspector"
                                  Style="{StaticResource PremiumNavButtonStyle}"
@@ -144,6 +150,12 @@
                                  Style="{StaticResource NavButtonStyle}"
                                  Checked="NavItem_Checked"
                                  Tag="Activation"
+                                 Visibility="Collapsed"/>
+                    <RadioButton x:Name="NavAdminPanel"
+                                 Content="🛡️ Admin Panel"
+                                 Style="{StaticResource PremiumNavButtonStyle}"
+                                 Checked="NavItem_Checked"
+                                 Tag="AdminPanel"
                                  Visibility="Collapsed"/>
                 </StackPanel>
 

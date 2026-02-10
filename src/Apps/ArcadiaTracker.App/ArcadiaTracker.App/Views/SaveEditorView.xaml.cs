@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using GameCompanion.Engine.Entitlements.Interfaces;
+using GameCompanion.Engine.Entitlements.Models;
+using GameCompanion.Engine.Entitlements.Services;
 using GameCompanion.Module.SaveModifier.Interfaces;
 using GameCompanion.Module.SaveModifier.Models;
 using GameCompanion.Module.SaveModifier.Services;
@@ -67,7 +69,15 @@ public partial class SaveEditorView : UserControl
         if (_consentService == null) return;
 
         var info = _consentService.GetConsentInfo(_gameId);
-        await _consentService.RecordConsentAsync(_gameId, info.Version, info.TextHash);
+        var consentRecord = new ConsentRecord
+        {
+            GameScope = _gameId,
+            ConsentVersion = info.Version,
+            AcceptedAt = DateTimeOffset.UtcNow,
+            ConsentTextHash = LocalConsentService.ComputeConsentHash(_gameId)
+        };
+
+        await _consentService.RecordConsentAsync(consentRecord);
         _hasConsent = true;
         ConsentBanner.Visibility = Visibility.Collapsed;
         EditorPanel.Visibility = Visibility.Visible;

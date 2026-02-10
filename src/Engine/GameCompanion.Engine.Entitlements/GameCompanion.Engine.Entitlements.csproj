@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="GameCompanion.Engine.Entitlements.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Core\GameCompanion.Core\GameCompanion.Core.csproj" />
   </ItemGroup>
 

@@ -408,7 +408,7 @@ public partial class MainWindow : Window
             ContentArea.Content = newContent;
 
             // Apply view transition animation
-            if (newContent is UIElement element)
+            if (newContent is FrameworkElement element)
             {
                 element.RenderTransform = new System.Windows.Media.TranslateTransform();
                 var storyboard = (Storyboard?)TryFindResource("ViewFadeInStoryboard");

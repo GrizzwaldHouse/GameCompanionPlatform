@@ -94,11 +94,28 @@ public partial class BackupManagerView : UserControl
 
             if (confirm != MessageBoxResult.Yes) return;
 
-            var result = await _saveHealthService.DeleteBackupAsync(backupId);
-            if (result.IsSuccess)
+            try
+            {
+                // Delete backup file and metadata
+                var backupDir = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "ArcadiaTracker", "backups");
+
+                var backupPath = Path.Combine(backupDir, backupId);
+                var metaPath = Path.Combine(backupDir, $"{backupId}.meta.json");
+
+                if (File.Exists(backupPath))
+                    File.Delete(backupPath);
+                if (File.Exists(metaPath))
+                    File.Delete(metaPath);
+
                 await RefreshBackupList();
-            else
-                ShowStatus($"Delete failed: {result.Error}", isError: true);
+                ShowStatus("Backup deleted successfully", isError: false);
+            }
+            catch (Exception ex)
+            {
+                ShowStatus($"Delete failed: {ex.Message}", isError: true);
+            }
         }
     }
 

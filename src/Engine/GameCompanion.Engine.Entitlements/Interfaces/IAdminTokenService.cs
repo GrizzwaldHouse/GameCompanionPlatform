@@ -55,7 +55,7 @@ public interface IAdminTokenService
 /// <summary>
 /// Diagnostic information about the admin subsystem.
 /// </summary>
-public sealed class AdminDiagnostics
+public sealed record AdminDiagnostics
 {
     public bool HasValidToken { get; init; }
     public string? TokenScope { get; init; }

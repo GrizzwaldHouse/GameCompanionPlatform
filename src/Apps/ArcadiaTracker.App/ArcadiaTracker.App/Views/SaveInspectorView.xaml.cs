@@ -41,24 +41,23 @@ public partial class SaveInspectorView : UserControl
         // Header fields
         var headerFields = new ObservableCollection<KeyValuePair<string, string>>
         {
-            new("Save Version", save.Header?.Version ?? "Unknown"),
-            new("Timestamp", save.Header?.Timestamp.ToString("O") ?? "Unknown"),
-            new("Checksum", save.Header?.Checksum ?? "N/A"),
-            new("Play Time (seconds)", save.PlayTime.ToString("F1")),
-            new("Map Unlocked", save.MapUnlocked.ToString()),
+            new("Session Name", save.SessionName ?? "Unknown"),
+            new("Save Timestamp", save.SaveTimestamp.ToString("O")),
+            new("Play Time (seconds)", save.PlayTime.TotalSeconds.ToString("F1")),
+            new("Tutorial Completed", save.GameState?.TutorialCompleted.ToString() ?? "Unknown"),
             new("Feature Flags", save.Corporations?.UnlockedFeaturesFlags.ToString() ?? "N/A"),
         };
         HeaderFieldsList.ItemsSource = headerFields;
 
         // Corporation details
         var corpDetails = new ObservableCollection<CorpDetailDisplay>();
-        if (save.Corporations?.Entries != null)
+        if (save.Corporations?.Corporations != null)
         {
-            foreach (var corp in save.Corporations.Entries)
+            foreach (var corp in save.Corporations.Corporations)
             {
                 corpDetails.Add(new CorpDetailDisplay
                 {
-                    Name = FormatCorpName(corp.Name),
+                    Name = corp.DisplayName,
                     InternalId = corp.Name,
                     Level = corp.CurrentLevel.ToString(),
                     XP = corp.CurrentXP.ToString("N0"),
@@ -76,13 +75,14 @@ public partial class SaveInspectorView : UserControl
             new("Unlocked Inventory Slots", save.Corporations?.UnlockedInventorySlots.ToString() ?? "—"),
             new("Feature Flags (raw)", $"0x{save.Corporations?.UnlockedFeaturesFlags:X8}"),
             new("Data Points (raw)", save.Corporations?.DataPoints.ToString() ?? "—"),
-            new("Total Corporations", save.Corporations?.Entries?.Count.ToString() ?? "0"),
-            new("Crafting Recipes (locked)", save.Crafting?.LockedRecipeCount.ToString() ?? "—"),
+            new("Total Corporations", save.Corporations?.Corporations?.Count.ToString() ?? "0"),
+            new("Crafting Recipes (locked)", save.Crafting?.LockedRecipes?.Count.ToString() ?? "—"),
             new("Crafting Recipes (unlocked)", save.Crafting?.UnlockedRecipeCount.ToString() ?? "—"),
-            new("Buildings Count", save.Buildings?.Count.ToString() ?? "0"),
-            new("Power Grids", save.PowerGrids?.Count.ToString() ?? "0"),
-            new("Enviro Wave Stage", save.EnviroWave?.CurrentStage.ToString() ?? "—"),
-            new("Enviro Wave Progress", save.EnviroWave?.StageProgress.ToString("P0") ?? "—"),
+            new("Crafting Total Recipes", save.Crafting?.TotalRecipeCount.ToString() ?? "—"),
+            new("Picked Up Items", save.Crafting?.PickedUpItems?.Count.ToString() ?? "—"),
+            new("Enviro Wave", save.EnviroWave?.Wave ?? "—"),
+            new("Enviro Wave Stage", save.EnviroWave?.Stage ?? "—"),
+            new("Enviro Wave Progress", save.EnviroWave?.Progress.ToString("P0") ?? "—"),
         };
         InternalCountersList.ItemsSource = counters;
 
@@ -113,12 +113,11 @@ public partial class SaveInspectorView : UserControl
         }
     }
 
-    private static string FormatPlaytime(double seconds)
+    private static string FormatPlaytime(TimeSpan playTime)
     {
-        var ts = TimeSpan.FromSeconds(seconds);
-        return ts.TotalHours >= 1
-            ? $"{(int)ts.TotalHours}h {ts.Minutes}m"
-            : $"{ts.Minutes}m {ts.Seconds}s";
+        return playTime.TotalHours >= 1
+            ? $"{(int)playTime.TotalHours}h {playTime.Minutes}m"
+            : $"{playTime.Minutes}m {playTime.Seconds}s";
     }
 
     private static string FormatCorpName(string internalName)
@@ -134,39 +133,35 @@ public partial class SaveInspectorView : UserControl
     {
         var summary = new JsonObject
         {
-            ["header"] = new JsonObject
+            ["sessionName"] = save.SessionName,
+            ["saveTimestamp"] = save.SaveTimestamp.ToString("O"),
+            ["playTime"] = save.PlayTime.TotalSeconds,
+            ["gameState"] = new JsonObject
             {
-                ["version"] = save.Header?.Version,
-                ["timestamp"] = save.Header?.Timestamp.ToString("O"),
-                ["checksum"] = save.Header?.Checksum
+                ["tutorialCompleted"] = save.GameState?.TutorialCompleted,
+                ["playtimeDuration"] = save.GameState?.PlaytimeDuration
             },
-            ["playTime"] = save.PlayTime,
-            ["mapUnlocked"] = save.MapUnlocked,
             ["corporations"] = new JsonObject
             {
                 ["dataPoints"] = save.Corporations?.DataPoints,
                 ["inventorySlots"] = save.Corporations?.UnlockedInventorySlots,
                 ["featureFlags"] = save.Corporations?.UnlockedFeaturesFlags,
-                ["count"] = save.Corporations?.Entries?.Count ?? 0
+                ["count"] = save.Corporations?.Corporations?.Count ?? 0
             },
             ["crafting"] = new JsonObject
             {
                 ["unlockedRecipes"] = save.Crafting?.UnlockedRecipeCount,
-                ["lockedRecipes"] = save.Crafting?.LockedRecipeCount
-            },
-            ["buildings"] = new JsonObject
-            {
-                ["count"] = save.Buildings?.Count ?? 0
-            },
-            ["powerGrids"] = new JsonObject
-            {
-                ["count"] = save.PowerGrids?.Count ?? 0
+                ["lockedRecipes"] = save.Crafting?.LockedRecipes?.Count ?? 0,
+                ["totalRecipes"] = save.Crafting?.TotalRecipeCount,
+                ["pickedUpItems"] = save.Crafting?.PickedUpItems?.Count ?? 0
             },
             ["enviroWave"] = new JsonObject
             {
-                ["stage"] = save.EnviroWave?.CurrentStage,
-                ["progress"] = save.EnviroWave?.StageProgress
-            }
+                ["wave"] = save.EnviroWave?.Wave,
+                ["stage"] = save.EnviroWave?.Stage,
+                ["progress"] = save.EnviroWave?.Progress
+            },
+            ["spatial"] = save.Spatial != null ? JsonValue.Create(true) : JsonValue.Create(false)
         };
 
         return summary.ToJsonString(new JsonSerializerOptions { WriteIndented = true });

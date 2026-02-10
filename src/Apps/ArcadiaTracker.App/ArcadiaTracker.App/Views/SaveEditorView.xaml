@@ -152,7 +152,7 @@
                             <Button x:Name="PreviewButton" Content="Preview Changes"
                                     Style="{StaticResource SecondaryButtonStyle}"
                                     Click="PreviewButton_Click" IsEnabled="False"/>
-                            <Button x:Name="ApplyButton" Content="Apply && Backup"
+                            <Button x:Name="ApplyButton" Content="Apply &amp;&amp; Backup"
                                     Style="{StaticResource PrimaryButtonStyle}"
                                     Click="ApplyButton_Click" IsEnabled="False"
                                     Margin="12,0,0,0"/>

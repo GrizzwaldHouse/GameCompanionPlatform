@@ -16,7 +16,10 @@
     <ProjectReference Include="..\..\..\Engine\GameCompanion.Engine.Tasks\GameCompanion.Engine.Tasks.csproj" />
     <ProjectReference Include="..\..\..\Engine\GameCompanion.Engine.SaveSafety\GameCompanion.Engine.SaveSafety.csproj" />
     <ProjectReference Include="..\..\..\Engine\GameCompanion.Engine.UI\GameCompanion.Engine.UI.csproj" />
+    <ProjectReference Include="..\..\..\Engine\GameCompanion.Engine.Entitlements\GameCompanion.Engine.Entitlements.csproj" />
     <ProjectReference Include="..\..\..\Modules\GameCompanion.Module.StarRupture\GameCompanion.Module.StarRupture.csproj" />
+    <ProjectReference Include="..\..\..\Modules\GameCompanion.Module.SaveModifier\GameCompanion.Module.SaveModifier.csproj" />
+    <ProjectReference Include="..\..\..\Modules\GameCompanion.Module.SaveModifier.StarRupture\GameCompanion.Module.SaveModifier.StarRupture.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,12 @@ using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using GameCompanion.Module.StarRupture.Services;
+using GameCompanion.Engine.Entitlements.Capabilities;
+using GameCompanion.Engine.Entitlements.Interfaces;
+using GameCompanion.Engine.Entitlements.Services;
+using GameCompanion.Module.SaveModifier.Interfaces;
+using GameCompanion.Module.SaveModifier.Services;
+using GameCompanion.Module.SaveModifier.StarRupture.Services;
 using Serilog;
 
 namespace ArcadiaTracker.App;
@@ -16,6 +22,10 @@ public partial class App : Application
     public static string CrashReportDir { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "ArcadiaTracker", "crash_reports");
+
+    private static string EntitlementsDir { get; } = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "ArcadiaTracker", "entitlements");
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -65,7 +75,15 @@ public partial class App : Application
 
         var services = new ServiceCollection();
         ConfigureServices(services);
+        ConfigureEntitlementServices(services);
         Services = services.BuildServiceProvider();
+
+        // Attempt admin capability injection (no-op in production)
+        _ = Task.Run(async () =>
+        {
+            var adminProvider = Services.GetRequiredService<AdminCapabilityProvider>();
+            await adminProvider.TryInjectAdminCapabilitiesAsync();
+        });
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -114,5 +132,79 @@ public partial class App : Application
         services.AddTransient<ViewModels.ExportViewModel>();
         services.AddTransient<ViewModels.AchievementsViewModel>();
         services.AddTransient<ViewModels.NotificationsViewModel>();
+    }
+
+    /// <summary>
+    /// Configures entitlement and capability-gated services.
+    /// The save modifier plugin is only registered if a valid capability exists;
+    /// otherwise these services are inert and invisible to the rest of the app.
+    /// </summary>
+    private static void ConfigureEntitlementServices(IServiceCollection services)
+    {
+        Directory.CreateDirectory(EntitlementsDir);
+
+        // Derive keys from machine-specific seed
+        var machineSeed = SigningKeyProvider.GetMachineSeed();
+        var signingKey = SigningKeyProvider.DeriveSigningKey(machineSeed);
+        var encryptionKey = SigningKeyProvider.DeriveEncryptionKey(machineSeed);
+
+        // Core entitlement infrastructure
+        var validator = new CapabilityValidator(signingKey);
+        var issuer = new CapabilityIssuer(validator);
+        var store = new LocalCapabilityStore(
+            Path.Combine(EntitlementsDir, "capabilities.dat"),
+            encryptionKey);
+
+        var entitlementService = new EntitlementService(validator, issuer, store);
+
+        services.AddSingleton(validator);
+        services.AddSingleton(issuer);
+        services.AddSingleton<ICapabilityStore>(store);
+        services.AddSingleton<IEntitlementService>(entitlementService);
+
+        // Capability-gated plugin loader
+        var pluginLoader = new CapabilityGatedPluginLoader(entitlementService);
+        services.AddSingleton(pluginLoader);
+
+        // Audit logger
+        var auditLogger = new LocalAuditLogger(Path.Combine(EntitlementsDir, "audit.log"));
+        services.AddSingleton(auditLogger);
+
+        // Consent service
+        var consentService = new LocalConsentService(Path.Combine(EntitlementsDir, "consent.json"));
+        services.AddSingleton<IConsentService>(consentService);
+
+        // Tamper detector
+        var tamperDetector = new TamperDetector(
+            Path.Combine(EntitlementsDir, "integrity.dat"),
+            auditLogger);
+        services.AddSingleton(tamperDetector);
+
+        // Admin capability provider (production-safe: disabled by default)
+#if DEBUG
+        var isProduction = false;
+#else
+        var isProduction = true;
+#endif
+        var adminProvider = new AdminCapabilityProvider(entitlementService, auditLogger, isProduction);
+        services.AddSingleton(adminProvider);
+
+        // Save modification orchestrator (capability-gated at runtime)
+        services.AddSingleton(sp =>
+        {
+            var orchestrator = new SaveModificationOrchestrator(
+                sp.GetRequiredService<IEntitlementService>(),
+                sp.GetRequiredService<IConsentService>(),
+                sp.GetRequiredService<GameCompanion.Engine.SaveSafety.Interfaces.IBackupService>(),
+                sp.GetRequiredService<LocalAuditLogger>());
+
+            // Register game-specific adapters
+            orchestrator.RegisterAdapter(new StarRuptureSaveModifierAdapter());
+
+            return orchestrator;
+        });
+
+        // Save modifier adapter (registered for direct access if needed)
+        services.AddSingleton<ISaveModifierAdapter, StarRuptureSaveModifierAdapter>();
     }
 }

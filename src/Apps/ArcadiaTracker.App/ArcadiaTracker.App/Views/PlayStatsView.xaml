@@ -1,0 +1,282 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.PlayStatsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ArcadiaTracker.App.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Play Statistics" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="Comprehensive overview of your gameplay metrics"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,0,0,24"/>
+
+            <!-- Top Stats Cards -->
+            <UniformGrid Columns="4" Margin="0,0,0,16">
+                <!-- Total Playtime -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="⏱️ TOTAL PLAYTIME" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="TotalPlaytimeText" Text="0h 0m"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Total Sessions -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📸 TOTAL SESSIONS" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="TotalSessionsText" Text="0"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Average Session Length -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📊 AVG SESSION" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="AvgSessionText" Text="0h 0m"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource SecondaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Longest Session -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="🏆 LONGEST SESSION" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="LongestSessionText" Text="0h 0m"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource SuccessBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Progress Rings -->
+            <UniformGrid Columns="3" Margin="0,0,0,16">
+                <!-- Overall Progress -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📈 Overall Progress" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar x:Name="OverallProgressBar"
+                                         Value="0" Maximum="100"
+                                         Style="{StaticResource SciFiProgressBar}"
+                                         Height="12"/>
+                            <TextBlock x:Name="OverallProgressText"
+                                       Grid.Column="1" Text="0%"
+                                       Foreground="{StaticResource PrimaryBrush}"
+                                       FontWeight="Bold"
+                                       Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Building Efficiency -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="⚙️ Building Efficiency" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar x:Name="BuildingEfficiencyBar"
+                                         Value="0" Maximum="100"
+                                         Style="{StaticResource SciFiProgressBar}"
+                                         Height="12"/>
+                            <TextBlock x:Name="BuildingEfficiencyText"
+                                       Grid.Column="1" Text="0%"
+                                       Foreground="{StaticResource SuccessBrush}"
+                                       FontWeight="Bold"
+                                       Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Blueprint Completion -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📘 Blueprint Completion" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar x:Name="BlueprintProgressBar"
+                                         Value="0" Maximum="100"
+                                         Style="{StaticResource SciFiProgressBar}"
+                                         Height="12"/>
+                            <TextBlock x:Name="BlueprintProgressText"
+                                       Grid.Column="1" Text="0%"
+                                       Foreground="{StaticResource SecondaryBrush}"
+                                       FontWeight="Bold"
+                                       Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Progression Summary -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Progression Summary" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <!-- Current Phase -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="📍 Current Phase:"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock x:Name="CurrentPhaseText" Text="Unknown"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <!-- Badges Earned -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="🏆 Badges Earned:"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock x:Name="BadgesEarnedText" Text="0 / 17"
+                                   Foreground="{StaticResource SuccessBrush}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <!-- Badge Progress Bar -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar x:Name="BadgeProgressBar"
+                                     Value="0" Maximum="100"
+                                     Style="{StaticResource SciFiProgressBar}"
+                                     Height="8"/>
+                        <TextBlock x:Name="BadgeProgressText"
+                                   Grid.Column="1" Text="0%"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Data Points -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="📊 Data Points:"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock x:Name="DataPointsText" Text="0"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <!-- Unique Items -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🔧 Unique Items:"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock x:Name="UniqueItemsText" Text="0"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Corporation Summary -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Corporation Summary" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <!-- Highest Corporation -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="🏢 Highest Corporation:"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock x:Name="HighestCorpNameText" Text="None"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock Text="(Lvl"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,4,0"/>
+                        <TextBlock x:Name="HighestCorpLevelText" Text="0"
+                                   Foreground="{StaticResource SuccessBrush}"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text=")"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+
+                    <!-- Total Corporation XP -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="💫 Total Corporation XP:"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock x:Name="TotalCorpXPText" Text="0"
+                                   Foreground="{StaticResource SecondaryBrush}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Building Summary -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Building Summary" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <!-- Stats Grid -->
+                    <UniformGrid Columns="4">
+                        <StackPanel Margin="0,0,8,0">
+                            <TextBlock Text="Total" FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBlock x:Name="TotalBuildingsText" Text="0"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       FontWeight="Bold" FontSize="18"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,8,0">
+                            <TextBlock Text="Operational" FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBlock x:Name="OperationalBuildingsText" Text="0"
+                                       Foreground="{StaticResource SuccessBrush}"
+                                       FontWeight="Bold" FontSize="18"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,8,0">
+                            <TextBlock Text="Disabled" FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBlock x:Name="DisabledBuildingsText" Text="0"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       FontWeight="Bold" FontSize="18"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Malfunction" FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBlock x:Name="MalfunctioningBuildingsText" Text="0"
+                                       Foreground="{StaticResource WarningBrush}"
+                                       FontWeight="Bold" FontSize="18"/>
+                        </StackPanel>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

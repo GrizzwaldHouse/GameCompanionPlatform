@@ -1,0 +1,175 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.NativeMapView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:ArcadiaTracker.App.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="World Map" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,4"/>
+            <TextBlock Text="Save-derived exploration map - bases, connections, and logistics"
+                       Style="{StaticResource SubheaderTextStyle}"/>
+        </StackPanel>
+
+        <!-- Toolbar: Layer Toggles + Actions -->
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Layer Toggles -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="Layers:" Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                    <CheckBox x:Name="GridCheck" Content="Grid" IsChecked="{Binding ShowLayerGrid}"
+                              Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0"
+                              VerticalAlignment="Center"/>
+
+                    <CheckBox x:Name="BasesCheck" Content="Bases" IsChecked="{Binding ShowLayerBases}"
+                              Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0"
+                              VerticalAlignment="Center"/>
+
+                    <CheckBox x:Name="ConnectionsCheck" Content="Connections" IsChecked="{Binding ShowLayerConnections}"
+                              Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0"
+                              VerticalAlignment="Center"/>
+
+                    <CheckBox x:Name="PlayerCheck" Content="Player" IsChecked="{Binding ShowLayerPlayer}"
+                              Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0"
+                              VerticalAlignment="Center"/>
+
+                    <CheckBox x:Name="LabelsCheck" Content="Labels" IsChecked="{Binding ShowLayerLabels}"
+                              Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0"
+                              VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Fit All" Style="{StaticResource SecondaryButtonStyle}"
+                            Click="FitAll_Click" Margin="0,0,8,0"/>
+                    <Button Content="Center Player" Style="{StaticResource SecondaryButtonStyle}"
+                            Click="CenterPlayer_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Map Canvas -->
+        <Border Grid.Row="2" CornerRadius="8" ClipToBounds="True"
+                Background="{StaticResource SurfaceBrush}">
+            <Grid>
+                <controls:MapCanvas x:Name="MapCanvasControl"
+                                    MapData="{Binding MapData}"
+                                    VisibleLayers="{Binding VisibleLayers}"
+                                    SelectedBase="{Binding SelectedBase, Mode=TwoWay}"/>
+
+                <!-- Base Detail Panel (right side overlay) -->
+                <Border x:Name="BaseDetailPanel"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Width="260"
+                        Margin="12"
+                        Background="#EE1A1A2E"
+                        CornerRadius="8"
+                        Padding="16"
+                        Visibility="Collapsed">
+                    <StackPanel>
+                        <Grid>
+                            <TextBlock x:Name="BaseNameText" Text="Base 1"
+                                       FontSize="16" FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <Button Content="X" HorizontalAlignment="Right"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Padding="6,2" FontSize="10"
+                                    Click="CloseDetail_Click"/>
+                        </Grid>
+
+                        <Separator Margin="0,8" Background="{StaticResource SurfaceLightBrush}"/>
+
+                        <!-- Stats -->
+                        <TextBlock x:Name="BaseBuildingCount" Text="Buildings: 0"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+                        <TextBlock x:Name="BaseOperationalCount" Text="Operational: 0"
+                                   Foreground="{StaticResource SuccessBrush}" Margin="0,2,0,0"/>
+                        <TextBlock x:Name="BaseDisabledCount" Text="Disabled: 0"
+                                   Foreground="{StaticResource WarningBrush}" Margin="0,2,0,0"/>
+                        <TextBlock x:Name="BaseMalfunctionCount" Text="Malfunction: 0"
+                                   Foreground="{StaticResource ErrorBrush}" Margin="0,2,0,0"/>
+                        <TextBlock x:Name="BaseCoreLevelText" Text="Core Level: 0"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+
+                        <Separator Margin="0,8" Background="{StaticResource SurfaceLightBrush}"/>
+
+                        <TextBlock Text="Machines" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+
+                        <ItemsControl x:Name="MachineList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding TypeName}"
+                                                   Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Foreground="{StaticResource TextPrimaryBrush}" FontSize="12">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}/{1}">
+                                                    <Binding Path="RunningCount"/>
+                                                    <Binding Path="Count"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- Loading Overlay -->
+                <Border Background="#CC0A0A0F"
+                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="Building map..."
+                                   FontSize="18"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   HorizontalAlignment="Center"/>
+                        <ProgressBar IsIndeterminate="True"
+                                     Width="200" Height="4" Margin="0,16,0,0"
+                                     Style="{StaticResource SciFiProgressBar}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3" Background="{StaticResource SurfaceBrush}"
+                CornerRadius="0,0,8,8" Padding="12,8" Margin="0,4,0,0">
+            <Grid>
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           VerticalAlignment="Center"/>
+
+                <TextBlock x:Name="ZoomText" Text="Zoom: 100%"
+                           HorizontalAlignment="Right"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

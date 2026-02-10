@@ -1,0 +1,202 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Settings" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="Configure your companion experience"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,0,0,24"/>
+
+            <!-- General Settings -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="General" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <!-- Auto Refresh -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Auto-refresh save data"
+                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Automatically check for save file changes"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       FontSize="12"/>
+                        </StackPanel>
+                        <CheckBox x:Name="AutoRefreshCheckbox" Grid.Column="1"
+                                  IsChecked="True"
+                                  VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Notifications -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Show notifications"
+                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Alert when badges are earned or milestones reached"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       FontSize="12"/>
+                        </StackPanel>
+                        <CheckBox x:Name="NotificationsCheckbox" Grid.Column="1"
+                                  IsChecked="True"
+                                  VerticalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Save Location -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Save Location" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <TextBlock Text="The companion automatically detects your save files in:"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,8"/>
+
+                    <Border Background="{StaticResource SurfaceLightBrush}"
+                            CornerRadius="4" Padding="12" Margin="0,0,0,8">
+                        <TextBlock Text="Steam Cloud: %Steam%\userdata\[ID]\1631270\remote\Saved\SaveGames\"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   FontFamily="Consolas" FontSize="12"/>
+                    </Border>
+
+                    <Border Background="{StaticResource SurfaceLightBrush}"
+                            CornerRadius="4" Padding="12">
+                        <TextBlock Text="Local: %LocalAppData%\StarRupture\Saved\SaveGames\"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   FontFamily="Consolas" FontSize="12"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- About -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="About" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Arcadia Tracker"
+                                   FontSize="18" FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryBrush}"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="VersionText" Text="Version 0.1.0"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,16"/>
+
+                    <TextBlock Text="An unofficial companion app for StarRupture. Track progression, explore maps, analyze saves, and optimize your gameplay. This application is not affiliated with, endorsed, or sponsored by the developers of StarRupture."
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,16"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="View Wiki"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Click="WikiButton_Click"
+                                Margin="0,0,8,0"/>
+                        <Button Content="Report Issue"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Click="ReportIssueButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Save Health -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,16,0,0">
+                <StackPanel>
+                    <TextBlock Text="Save Health" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                <TextBlock Text="Status: " Foreground="{StaticResource TextSecondaryBrush}"/>
+                                <TextBlock x:Name="HealthStatusText" Text="Unknown"
+                                           FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}"/>
+                            </StackPanel>
+                            <TextBlock x:Name="HealthDetailsText" Text=""
+                                       Foreground="{StaticResource TextMutedBrush}" FontSize="12"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock x:Name="BackupCountText" Text="0 backups"
+                                       Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                                       HorizontalAlignment="Right"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <ItemsControl x:Name="HealthIssuesList" Margin="0,0,0,12" Visibility="Collapsed">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{StaticResource WarningBrush}" FontSize="12"
+                                           Margin="0,2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Create Backup"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Click="CreateBackup_Click"
+                                Margin="0,0,8,0"/>
+                        <Button x:Name="RestoreButton" Content="Restore Latest"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Click="RestoreBackup_Click"
+                                IsEnabled="False"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="HealthActionStatus"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               FontSize="12" Margin="0,8,0,0"
+                               Visibility="Collapsed"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Error Reporting -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,16,0,0">
+                <StackPanel>
+                    <TextBlock Text="Error Reporting" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <TextBlock Text="If you encounter issues, copy the latest crash report to share with the developer."
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,12"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Copy Error Report"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Click="CopyErrorReport_Click"
+                                Margin="0,0,8,0"/>
+                        <Button Content="Open Crash Logs Folder"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Click="OpenCrashFolder_Click"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="CrashReportStatus"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               FontSize="12" Margin="0,8,0,0"
+                               Visibility="Collapsed"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

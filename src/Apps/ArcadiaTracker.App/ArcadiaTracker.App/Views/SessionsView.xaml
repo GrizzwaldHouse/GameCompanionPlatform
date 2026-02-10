@@ -1,0 +1,125 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.SessionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Session History" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="Timeline of your play sessions"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,0,0,24"/>
+
+            <!-- Summary Cards -->
+            <UniformGrid Columns="3" Margin="0,0,0,16">
+                <!-- Total Tracked Time -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="⏱️ TOTAL TIME" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="TotalTimeText" Text="0h 0m"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Session Count -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📸 SNAPSHOTS" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="SessionCountText" Text="0 snapshots"
+                                   FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Progress Delta -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📈 PROGRESS DELTA" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="ProgressDeltaText" Text="—"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource SecondaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Timeline -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Timeline" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <ItemsControl x:Name="SnapshotList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,12" Padding="16,12" CornerRadius="8"
+                                        Background="{StaticResource SurfaceLightBrush}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Timestamp -->
+                                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                                   Text="{Binding Timestamp, StringFormat='📅 {0:yyyy-MM-dd HH:mm:ss}'}"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   FontWeight="SemiBold"/>
+
+                                        <!-- Progress Badge -->
+                                        <Border Grid.Row="0" Grid.Column="1"
+                                                Background="{StaticResource PrimaryBrush}"
+                                                CornerRadius="12" Padding="12,4">
+                                            <TextBlock Text="{Binding ProgressDisplay}"
+                                                       Foreground="{StaticResource BackgroundBrush}"
+                                                       FontWeight="Bold" FontSize="13"/>
+                                        </Border>
+
+                                        <!-- Details -->
+                                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                    Orientation="Horizontal" Margin="0,8,0,0">
+                                            <TextBlock Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,16,0">
+                                                <Run Text="⏱️"/>
+                                                <Run Text="{Binding PlayTimeDisplay}"/>
+                                            </TextBlock>
+                                            <TextBlock Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,16,0">
+                                                <Run Text="📍"/>
+                                                <Run Text="{Binding Phase}"/>
+                                            </TextBlock>
+                                            <TextBlock Foreground="{StaticResource TextSecondaryBrush}">
+                                                <Run Text="📘"/>
+                                                <Run Text="{Binding BlueprintsUnlocked}"/>
+                                                <Run Text=" blueprints"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Empty state -->
+                    <TextBlock x:Name="NoSnapshotsText"
+                               Text="No session snapshots available"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Visibility="Collapsed"
+                               HorizontalAlignment="Center"
+                               Margin="0,16"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,256 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Dashboard" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="Your progress at a glance"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,0,0,24"/>
+
+            <!-- Top Stats Cards -->
+            <UniformGrid Columns="4" Margin="0,0,0,16">
+                <!-- Playtime Card -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="⏱️ PLAYTIME" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="PlaytimeText" Text="0h 0m"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Phase Card -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📍 CURRENT PHASE" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="PhaseText" Text="Unknown"
+                                   FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Data Points Card -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📊 DATA POINTS" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="DataPointsText" Text="0"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource SecondaryBrush}"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Corporation Card -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="🏢 TOP CORPORATION" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock x:Name="CorporationText" Text="None"
+                                   FontSize="16" FontWeight="Bold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Margin="0,8,0,0"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Cataclysm Timer -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="⚡ Cataclysm Timer" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock Text="Wave:" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,8,0"/>
+                                <TextBlock x:Name="CataclysmWaveText" Text="—"
+                                           Foreground="{StaticResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                                <TextBlock Text=" · " Foreground="{StaticResource TextMutedBrush}"/>
+                                <TextBlock x:Name="CataclysmStageText" Text="—"
+                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                            <ProgressBar x:Name="CataclysmProgressBar" Value="0" Maximum="100"
+                                         Style="{StaticResource SciFiProgressBar}" Height="8"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock x:Name="CataclysmTimeText" Text="—"
+                                       FontSize="24" FontWeight="Bold"
+                                       Foreground="{StaticResource PrimaryBrush}"
+                                       HorizontalAlignment="Right"/>
+                            <TextBlock x:Name="CataclysmUrgencyText" Text=""
+                                       FontSize="11"
+                                       HorizontalAlignment="Right"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Corporation Breakdown -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Corporation Reputation" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+                    <ItemsControl x:Name="CorporationsList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8" Padding="12,10" CornerRadius="8"
+                                        Background="{StaticResource SurfaceLightBrush}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding LevelDisplay}"
+                                                   Foreground="{StaticResource PrimaryBrush}"
+                                                   FontWeight="Bold" Margin="0,0,16,0"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding XPDisplay}"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   VerticalAlignment="Center" MinWidth="80"
+                                                   TextAlignment="Right"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock x:Name="NoCorporationsText"
+                               Text="No corporation data available"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Visibility="Collapsed"
+                               HorizontalAlignment="Center"
+                               Margin="0,8"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Progress Section -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Overall Progress" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <!-- Overall Progress Bar -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar x:Name="OverallProgressBar"
+                                     Value="0" Maximum="100"
+                                     Style="{StaticResource SciFiProgressBar}"
+                                     Height="12"/>
+                        <TextBlock x:Name="OverallProgressText"
+                                   Grid.Column="1" Text="0%"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Blueprint Progress -->
+                    <TextBlock Text="📘 Blueprints" FontSize="13"
+                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar x:Name="BlueprintProgressBar"
+                                     Value="0" Maximum="100"
+                                     Style="{StaticResource SciFiProgressBar}"/>
+                        <TextBlock x:Name="BlueprintProgressText"
+                                   Grid.Column="1" Text="0 / 0"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="12,0,0,0" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Map Status -->
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <TextBlock Text="🗺️ Map Access:"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock x:Name="MapStatusText" Text="Locked"
+                                   Foreground="{StaticResource WarningBrush}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <!-- Wave Status -->
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <TextBlock Text="🌊 Current Wave:"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock x:Name="WaveText" Text="N/A"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Badges Section -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="🏆 Earned Badges" FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock x:Name="BadgeCountText" Grid.Column="1"
+                                   Text="0 / 0"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </Grid>
+
+                    <ItemsControl x:Name="BadgesList">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="4" Padding="12,8" CornerRadius="8"
+                                        Background="{StaticResource SurfaceLightBrush}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Icon}" FontSize="20" Margin="0,0,8,0"/>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Description}"
+                                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                                       FontSize="11"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Empty state -->
+                    <TextBlock x:Name="NoBadgesText"
+                               Text="No badges earned yet. Keep playing!"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Visibility="Collapsed"
+                               HorizontalAlignment="Center"
+                               Margin="0,16"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

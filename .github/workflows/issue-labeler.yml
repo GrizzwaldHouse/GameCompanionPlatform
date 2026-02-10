@@ -1,0 +1,149 @@
+name: Issue Labeler
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  label-and-prompt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Extract issue type and post Claude prompt
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title;
+            const body = issue.body || '';
+
+            // Determine issue type from title prefix
+            let issueType = 'general';
+            let taskVerb = 'Investigate';
+
+            if (title.startsWith('[Bug]')) {
+              issueType = 'bug';
+              taskVerb = 'Investigate this bug, identify the root cause, and propose a fix';
+            } else if (title.startsWith('[Feature]')) {
+              issueType = 'feature';
+              taskVerb = 'Design and implement this feature following existing MVVM patterns';
+            } else if (title.startsWith('[Refactor]')) {
+              issueType = 'refactor';
+              taskVerb = 'Analyze the current code and propose a refactoring plan';
+            }
+
+            // Extract component from form body
+            let component = 'Unknown';
+            const componentMatch = body.match(/### Component\s*\n\s*(\S[^\n]*)/);
+            if (componentMatch) {
+              component = componentMatch[1].trim();
+            }
+
+            // Extract Claude instructions if provided
+            let claudeInstructions = '';
+            const claudeMatch = body.match(/### Claude Instructions \(optional\)\s*\n\s*([\s\S]*?)(?=\n###|$)/);
+            if (claudeMatch && claudeMatch[1].trim() && claudeMatch[1].trim() !== '_No response_') {
+              claudeInstructions = `\n**Additional Instructions:** ${claudeMatch[1].trim()}`;
+            }
+
+            // Add component label
+            const componentLabels = {
+              'Dashboard': 'component:dashboard',
+              'Progression Tracker': 'component:progression',
+              'World Map': 'component:map',
+              'Interactive Map': 'component:map',
+              'Production Tracker': 'component:production',
+              'Research Tree': 'component:research',
+              'Session History': 'component:sessions',
+              'Play Statistics': 'component:stats',
+              'Achievements': 'component:achievements',
+              'Notifications': 'component:notifications',
+              'Data Export': 'component:export',
+              'Roadmap': 'component:roadmap',
+              'Settings': 'component:settings',
+              'Save Parser': 'component:save-parser',
+              'Core Framework': 'component:core',
+            };
+
+            const labelsToAdd = [];
+            if (componentLabels[component]) {
+              labelsToAdd.push(componentLabels[component]);
+            }
+            labelsToAdd.push('claude-analyze');
+
+            // Create missing labels silently
+            for (const label of labelsToAdd) {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                });
+              } catch {
+                const colors = {
+                  'claude-analyze': '7B68EE',
+                };
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                  color: label.startsWith('component:') ? '0E8A16' : (colors[label] || 'CCCCCC'),
+                });
+              }
+            }
+
+            // Add labels
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: labelsToAdd,
+              });
+            }
+
+            // Post Claude Code prompt as comment
+            const prompt = `## Claude Code Prompt
+
+            Copy this into Claude Code to work on this issue:
+
+            ---
+
+            \`\`\`
+            You are working on GameCompanionPlatform (Arcadia Tracker).
+            Repository: GrizzwaldHouse/GameCompanionPlatform
+            Architecture: .NET 8, C# 12, WPF, MVVM (CommunityToolkit.Mvvm)
+
+            Issue #${issue.number}: ${title}
+            Component: ${component}
+            Type: ${issueType}
+
+            Description:
+            ${body.replace(/### Claude Instructions \(optional\)[\s\S]*$/, '').trim()}
+
+            Task: ${taskVerb}. Read the relevant source files in the ${component} area,
+            explain your reasoning, and show the exact changes needed.${claudeInstructions}
+
+            Constraints:
+            - Save files are READ-ONLY (never modify .sav files)
+            - No credential or API key access
+            - Follow existing Result<T> error handling patterns
+            - Follow existing MVVM patterns (ViewModel + View + Service)
+            - Register new services in DI container (App.xaml.cs)
+            - Add unit tests for new logic
+            - Commit to a feature branch, not main
+            \`\`\`
+
+            ---
+            *Auto-generated by issue-labeler workflow. Edit the prompt as needed before using.*`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: prompt.split('\n').map(l => l.trim()).join('\n'),
+            });

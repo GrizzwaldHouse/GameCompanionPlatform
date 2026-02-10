@@ -1,0 +1,72 @@
+name: Bug Report
+description: Report a bug in Arcadia Tracker
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the app is affected?
+      options:
+        - Dashboard
+        - Progression Tracker
+        - World Map
+        - Interactive Map
+        - Production Tracker
+        - Research Tree
+        - Session History
+        - Play Statistics
+        - Achievements
+        - Notifications
+        - Data Export
+        - Roadmap
+        - Settings
+        - Save Parser
+        - Core Framework
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened?
+      placeholder: Describe the bug...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this?
+      placeholder: |
+        1. Open the app
+        2. Navigate to...
+        3. Click on...
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs Actual
+      description: What should happen vs what actually happens?
+      placeholder: |
+        Expected: Score displays correctly
+        Actual: Score shows 0
+    validations:
+      required: false
+
+  - type: textarea
+    id: claude-instructions
+    attributes:
+      label: Claude Instructions (optional)
+      description: Any specific constraints or guidance for Claude Code analysis
+      placeholder: |
+        e.g., Focus on the ViewModel layer, check data binding,
+        don't modify save file parsing logic
+    validations:
+      required: false

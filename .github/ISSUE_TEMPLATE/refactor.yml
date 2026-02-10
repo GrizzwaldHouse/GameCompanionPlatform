@@ -1,0 +1,73 @@
+name: Refactor
+description: Propose a code refactoring
+title: "[Refactor] "
+labels: ["refactor"]
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the app to refactor?
+      options:
+        - Dashboard
+        - Progression Tracker
+        - World Map
+        - Interactive Map
+        - Production Tracker
+        - Research Tree
+        - Session History
+        - Play Statistics
+        - Achievements
+        - Notifications
+        - Data Export
+        - Roadmap
+        - Settings
+        - Save Parser
+        - Core Framework
+        - Engine Layer
+        - Test Suite
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What to Refactor
+      description: What code needs to change?
+      placeholder: Describe the current code and what should change...
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What's the motivation?
+      placeholder: |
+        e.g., Reduce duplication, improve testability,
+        simplify the service layer
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: What should NOT change?
+      placeholder: |
+        e.g., Don't change the public API,
+        keep backward compatibility with existing saves
+    validations:
+      required: false
+
+  - type: textarea
+    id: claude-instructions
+    attributes:
+      label: Claude Instructions (optional)
+      description: Any specific constraints or guidance for Claude Code
+      placeholder: |
+        e.g., Use Result<T> pattern for error handling,
+        follow existing service interface patterns
+    validations:
+      required: false

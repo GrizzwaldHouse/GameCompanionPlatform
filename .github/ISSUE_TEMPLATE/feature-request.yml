@@ -1,0 +1,71 @@
+name: Feature Request
+description: Suggest a new feature for Arcadia Tracker
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the app does this relate to?
+      options:
+        - Dashboard
+        - Progression Tracker
+        - World Map
+        - Interactive Map
+        - Production Tracker
+        - Research Tree
+        - Session History
+        - Play Statistics
+        - Achievements
+        - Notifications
+        - Data Export
+        - Roadmap
+        - Settings
+        - Save Parser
+        - Core Framework
+        - New Module
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: What do you want to add?
+      placeholder: Describe the feature...
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this feature useful?
+      placeholder: This would help because...
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this is done?
+      placeholder: |
+        - [ ] Feature shows X when Y
+        - [ ] Tests pass for new logic
+        - [ ] UI matches existing theme
+    validations:
+      required: false
+
+  - type: textarea
+    id: claude-instructions
+    attributes:
+      label: Claude Instructions (optional)
+      description: Any specific constraints or guidance for Claude Code
+      placeholder: |
+        e.g., Follow existing MVVM pattern, add ViewModel + View,
+        register in DI container in App.xaml.cs
+    validations:
+      required: false

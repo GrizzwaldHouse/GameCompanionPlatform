@@ -4,15 +4,78 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="700" d:DesignWidth="900">
+             d:DesignHeight="900" d:DesignWidth="900">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel>
             <!-- Header -->
             <TextBlock Text="Admin Panel" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,4"/>
-            <TextBlock Text="DEBUG BUILD ONLY — Generate activation codes and manage entitlements"
-                       Foreground="{StaticResource WarningBrush}" FontSize="12"
-                       FontWeight="SemiBold" Margin="0,0,0,24"/>
+
+            <!-- Admin Status Banner -->
+            <Border x:Name="AdminStatusBanner" CornerRadius="8" Padding="16,12" Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock x:Name="AdminStatusText" FontSize="13" FontWeight="SemiBold"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <TextBlock x:Name="AdminScopeText" FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBlock x:Name="AdminExpiryText" FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}" Margin="16,0,0,0"/>
+                            <TextBlock x:Name="AdminMethodText" FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}" Margin="16,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Button Grid.Column="1" x:Name="RevokeAdminButton"
+                            Content="Revoke Admin"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="RevokeAdminButton_Click"
+                            Visibility="Collapsed"/>
+                </Grid>
+            </Border>
+
+            <!-- Break-Glass Emergency Access -->
+            <Border x:Name="BreakGlassSection" Style="{StaticResource CardStyle}" Margin="0,0,0,16"
+                    Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="Emergency Admin Access" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource WarningBrush}" Margin="0,0,0,8"/>
+                    <TextBlock Text="Use this only when the admin token has expired and you need emergency access."
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                               TextWrapping="Wrap" Margin="0,0,0,16"/>
+
+                    <TextBlock Text="CHALLENGE" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="BreakGlassChallengeText" FontFamily="Consolas" FontSize="18"
+                               FontWeight="Bold" Foreground="{StaticResource WarningBrush}"
+                               Margin="0,0,0,16"/>
+
+                    <TextBlock Text="RESPONSE (8-char hex code)" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBox x:Name="BreakGlassResponseBox" Width="180"
+                                 FontFamily="Consolas" FontSize="16"
+                                 Background="{StaticResource SurfaceLightBrush}"
+                                 Foreground="{StaticResource TextPrimaryBrush}"
+                                 BorderBrush="{StaticResource WarningBrush}"
+                                 BorderThickness="1" Padding="8,6"
+                                 MaxLength="8"
+                                 CaretBrush="{StaticResource WarningBrush}"/>
+                        <Button x:Name="BreakGlassActivateButton" Content="Activate (4h)"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Click="BreakGlassActivateButton_Click"
+                                Margin="12,0,0,0"/>
+                    </StackPanel>
+
+                    <Border x:Name="BreakGlassStatusBorder" Padding="12,8" CornerRadius="6"
+                            Visibility="Collapsed">
+                        <TextBlock x:Name="BreakGlassStatusText" FontSize="12" TextWrapping="Wrap"/>
+                    </Border>
+                </StackPanel>
+            </Border>
 
             <!-- Code Generator -->
             <Border Style="{StaticResource PremiumCardStyle}" Margin="0,0,0,16">
@@ -69,7 +132,7 @@
                 <StackPanel>
                     <TextBlock Text="Quick Self-Activate" FontSize="16" FontWeight="SemiBold"
                                Foreground="{StaticResource AccentGoldBrush}" Margin="0,0,0,8"/>
-                    <TextBlock Text="Generate and immediately activate all Pro features on this machine."
+                    <TextBlock Text="Generate and immediately activate features on this machine."
                                Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
                                Margin="0,0,0,16"/>
 
@@ -126,6 +189,121 @@
                 </StackPanel>
             </Border>
 
+            <!-- Capability Inspector -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Capability Inspector" FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <Button Grid.Column="1" x:Name="RefreshCapabilitiesButton"
+                                Content="Refresh"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Padding="8,4" FontSize="11"
+                                Click="RefreshCapabilitiesButton_Click"/>
+                    </Grid>
+                    <ItemsControl x:Name="CapabilityList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,4" Padding="10,8" CornerRadius="6"
+                                        Background="{StaticResource SurfaceLightBrush}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Action}" FontSize="13"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding ScopeDisplay}" FontSize="10"
+                                                       Foreground="{StaticResource TextMutedBrush}"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding ExpiryDisplay}"
+                                                   FontSize="10" VerticalAlignment="Center"
+                                                   Foreground="{Binding ExpiryColor}" Margin="12,0"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding StatusIcon}"
+                                                   FontSize="14" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock x:Name="NoCapabilitiesText"
+                               Text="No active capabilities found."
+                               Foreground="{StaticResource TextMutedBrush}"
+                               HorizontalAlignment="Center" Margin="0,8"
+                               Visibility="Collapsed"/>
+                </StackPanel>
+            </Border>
+
+            <!-- System Diagnostics -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="System Diagnostics" FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <Button Grid.Column="1" x:Name="RefreshDiagnosticsButton"
+                                Content="Refresh"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Padding="8,4" FontSize="11"
+                                Click="RefreshDiagnosticsButton_Click"/>
+                    </Grid>
+                    <ItemsControl x:Name="DiagnosticsList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,3" Padding="10,6" CornerRadius="4"
+                                        Background="{StaticResource SurfaceLightBrush}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Label}" FontSize="11"
+                                                   Foreground="{StaticResource TextMutedBrush}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Value}"
+                                                   FontSize="11" FontFamily="Consolas"
+                                                   Foreground="{Binding ValueColor}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Entitlement Repair -->
+                    <TextBlock Text="REPAIR TOOLS" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="0,16,0,8"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="PurgeExpiredButton" Content="Purge Expired"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Padding="8,4" FontSize="11"
+                                Click="PurgeExpiredButton_Click"/>
+                        <Button x:Name="VerifyIntegrityButton" Content="Verify Store Integrity"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Padding="8,4" FontSize="11"
+                                Click="VerifyIntegrityButton_Click"
+                                Margin="8,0,0,0"/>
+                        <Button x:Name="ExportAuditButton" Content="Export Audit Log"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Padding="8,4" FontSize="11"
+                                Click="ExportAuditButton_Click"
+                                Margin="8,0,0,0"/>
+                    </StackPanel>
+                    <Border x:Name="RepairStatusBorder" Margin="0,8,0,0"
+                            Padding="12,8" CornerRadius="6" Visibility="Collapsed">
+                        <TextBlock x:Name="RepairStatusText" FontSize="12" TextWrapping="Wrap"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
             <!-- Audit Log Viewer -->
             <Border Style="{StaticResource CardStyle}">
                 <StackPanel>
@@ -137,7 +315,7 @@
                         <TextBlock Text="Recent Audit Log" FontSize="16" FontWeight="SemiBold"
                                    Foreground="{StaticResource TextPrimaryBrush}"/>
                         <Button Grid.Column="1" x:Name="RefreshAuditButton"
-                                Content="↻ Refresh"
+                                Content="Refresh"
                                 Style="{StaticResource SecondaryButtonStyle}"
                                 Padding="8,4" FontSize="11"
                                 Click="RefreshAuditButton_Click"/>

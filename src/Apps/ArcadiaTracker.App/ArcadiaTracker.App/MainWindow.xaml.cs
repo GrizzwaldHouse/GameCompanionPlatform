@@ -343,7 +343,7 @@ public partial class MainWindow : Window
         }
         NavActivation.Visibility = Visibility.Visible;
 
-        // Admin panel: only in DEBUG builds with admin capabilities
+        // Admin panel: available when admin capabilities are active (any build)
         var adminProvider = App.Services.GetRequiredService<AdminCapabilityProvider>();
         if (await adminProvider.HasAdminOverrideAsync(GameScope))
         {
@@ -351,7 +351,12 @@ public partial class MainWindow : Window
             {
                 _adminPanelView = new AdminPanelView();
                 var auditLogger = App.Services.GetRequiredService<LocalAuditLogger>();
-                _adminPanelView.Initialize(activationService!, entitlementService, auditLogger, GameScope);
+                var adminTokenService = App.Services.GetRequiredService<IAdminTokenService>();
+                var tamperDetector = App.Services.GetRequiredService<TamperDetector>();
+                var capabilityStore = App.Services.GetRequiredService<ICapabilityStore>();
+                _adminPanelView.Initialize(
+                    activationService!, entitlementService, auditLogger, GameScope,
+                    adminProvider, adminTokenService, tamperDetector, capabilityStore);
                 _adminPanelView.FeaturesActivated += async (s, e) =>
                 {
                     await InitializePremiumFeatures();

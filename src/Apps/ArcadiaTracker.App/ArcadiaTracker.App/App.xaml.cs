@@ -180,13 +180,24 @@ public partial class App : Application
             auditLogger);
         services.AddSingleton(tamperDetector);
 
-        // Admin capability provider (production-safe: disabled by default)
+        // Admin token service (release-safe admin authentication)
+        var adminTokenService = new AdminTokenService(
+            Path.Combine(EntitlementsDir, "admin.token"),
+            encryptionKey,
+            auditLogger,
+            tamperDetector);
+        services.AddSingleton<IAdminTokenService>(adminTokenService);
+
+        // Admin capability provider
+        // - In DEBUG: env vars OR admin token
+        // - In RELEASE: admin token only (env vars ignored)
 #if DEBUG
         var isProduction = false;
 #else
         var isProduction = true;
 #endif
-        var adminProvider = new AdminCapabilityProvider(entitlementService, auditLogger, isProduction);
+        var adminProvider = new AdminCapabilityProvider(
+            entitlementService, auditLogger, isProduction, adminTokenService);
         services.AddSingleton(adminProvider);
 
         // Activation code service (for code-based feature unlocking)

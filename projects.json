@@ -1,0 +1,246 @@
+{
+  "owner": "Marcus Daley",
+  "github": "GrizzwaldHouse",
+  "generated": "2026-02-11",
+  "goal": "Ship products and generate revenue within 3 weeks",
+  "projects": [
+    {
+      "id": 1,
+      "name": "Arcadia Tracker",
+      "repo": "GameCompanionPlatform",
+      "tier": 1,
+      "priority_rank": 1,
+      "tech": [".NET 8", "WPF", "C#", "WebView2"],
+      "completion_pct": 85,
+      "state": "near-complete",
+      "revenue_model": "itch.io / Steam ($4.99-9.99)",
+      "est_monthly_revenue_low": 200,
+      "est_monthly_revenue_high": 800,
+      "sprint_week": 1,
+      "tasks": [
+        { "task": "Polish UI/UX and add app icon/branding", "done": false },
+        { "task": "Build installer package (MSIX or InnoSetup)", "done": false },
+        { "task": "Create itch.io developer account and store page", "done": false },
+        { "task": "Take screenshots and write store description", "done": false },
+        { "task": "Record demo video/trailer", "done": false },
+        { "task": "Beta release on itch.io", "done": false },
+        { "task": "Set up community Discord", "done": false },
+        { "task": "Post in StarRupture community", "done": false }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Portfolio Website Business",
+      "repo": "portfolio-website",
+      "tier": 1,
+      "priority_rank": 2,
+      "tech": ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
+      "completion_pct": 40,
+      "state": "template-exists",
+      "revenue_model": "Freelance service ($500-2000/site)",
+      "est_monthly_revenue_low": 1000,
+      "est_monthly_revenue_high": 4000,
+      "sprint_week": 1,
+      "tasks": [
+        { "task": "Migrate from Vercel to free hosting (GitHub Pages/Cloudflare Pages)", "done": false },
+        { "task": "Build your own portfolio showcasing all projects", "done": false },
+        { "task": "Create 2-3 reusable portfolio templates", "done": false },
+        { "task": "Add business/services section with pricing", "done": false },
+        { "task": "Set up payment processing", "done": false },
+        { "task": "Market to Full Sail alumni network", "done": false }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "WizardJam 2.0",
+      "repo": "WizardJam2.0",
+      "tier": 1,
+      "priority_rank": 5,
+      "tech": ["Unreal Engine 5.5", "C++", "Blueprint"],
+      "completion_pct": 20,
+      "state": "early-development",
+      "revenue_model": "Steam Early Access ($14.99) -> Full ($19.99)",
+      "est_monthly_revenue_low": 500,
+      "est_monthly_revenue_high": 3000,
+      "sprint_week": 3,
+      "tasks": [
+        { "task": "AI opponent system", "done": false },
+        { "task": "Scoring and match flow", "done": false },
+        { "task": "Basic UI/HUD", "done": false },
+        { "task": "Sound design integration", "done": false },
+        { "task": "Playable demo build", "done": false },
+        { "task": "Steam store page setup", "done": false }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Cowork-Skills",
+      "repo": "cowork-skills",
+      "tier": 1,
+      "priority_rank": 3,
+      "tech": ["PowerShell", "Shell", "Claude Code"],
+      "completion_pct": 70,
+      "state": "working",
+      "revenue_model": "Gumroad / Marketplace ($5-15)",
+      "est_monthly_revenue_low": 50,
+      "est_monthly_revenue_high": 200,
+      "sprint_week": 2,
+      "tasks": [
+        { "task": "Add 3-5 more game dev specific skills", "done": false },
+        { "task": "Create showcase/demo content", "done": false },
+        { "task": "Write documentation with usage examples", "done": false },
+        { "task": "Set up Gumroad listing", "done": false },
+        { "task": "Market on Claude Code community channels", "done": false }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Vulkan Renderer",
+      "repo": "Vulkan-Renderer",
+      "tier": 2,
+      "priority_rank": 6,
+      "tech": ["Vulkan 1.3", "C++20", "GLSL", "CMake"],
+      "completion_pct": 95,
+      "state": "complete",
+      "revenue_model": "portfolio-showcase",
+      "sprint_week": 2,
+      "tasks": [
+        { "task": "Ensure portfolio website links to this repo", "done": false },
+        { "task": "Add topics/tags on GitHub", "done": false }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Portfolio Website (Your Own)",
+      "repo": "portfolio-website",
+      "tier": 2,
+      "priority_rank": 2,
+      "tech": ["Next.js", "TypeScript", "Tailwind CSS"],
+      "completion_pct": 40,
+      "state": "deployed-but-basic",
+      "revenue_model": "marketing-tool",
+      "sprint_week": 1,
+      "tasks": [
+        { "task": "Add all project showcases with screenshots", "done": false },
+        { "task": "Add resume/about section", "done": false },
+        { "task": "Add contact form", "done": false },
+        { "task": "SEO optimization", "done": false }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "GitHub Pages Site",
+      "repo": "GrizzwaldHouse.github.io",
+      "tier": 2,
+      "priority_rank": 4,
+      "tech": ["Jekyll", "GitHub Pages"],
+      "completion_pct": 60,
+      "state": "basic-resume",
+      "revenue_model": "marketing-tool",
+      "sprint_week": 1,
+      "tasks": [
+        { "task": "Update with all current projects", "done": false },
+        { "task": "Add links to live demos and repos", "done": false },
+        { "task": "Modernize design", "done": false }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "GitHub Profile README",
+      "repo": "GrizzwaldHouse/GrizzwaldHouse",
+      "tier": 2,
+      "priority_rank": 4,
+      "tech": ["Markdown"],
+      "completion_pct": 0,
+      "state": "does-not-exist",
+      "revenue_model": "marketing-tool",
+      "sprint_week": 1,
+      "tasks": [
+        { "task": "Create profile README repo", "done": false },
+        { "task": "Add bio, skills, project showcase", "done": false },
+        { "task": "Add contribution stats widget", "done": false }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Island Escape",
+      "repo": "Island-Escape",
+      "tier": 3,
+      "priority_rank": 6,
+      "tech": ["Unreal Engine 5.5", "C++"],
+      "completion_pct": 70,
+      "state": "team-project-complete",
+      "revenue_model": "portfolio-showcase",
+      "sprint_week": 3,
+      "tasks": [
+        { "task": "Add comprehensive README with screenshots", "done": false },
+        { "task": "Add repo description and topics", "done": false },
+        { "task": "Link in portfolio", "done": false }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "CryptCrawler (TheDynamicDesign)",
+      "repo": "TheDynamicDesign",
+      "tier": 3,
+      "priority_rank": 6,
+      "tech": ["Unity", "C#", "ShaderLab", "WebGL"],
+      "completion_pct": 80,
+      "state": "has-webgl-demo",
+      "revenue_model": "portfolio-showcase",
+      "sprint_week": 3,
+      "tasks": [
+        { "task": "Ensure WebGL demo is accessible", "done": false },
+        { "task": "Add README with gameplay description", "done": false },
+        { "task": "Link demo in portfolio", "done": false }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "UnrealMCPEditorTool",
+      "repo": "UnrealMCPEditorTool",
+      "tier": 3,
+      "priority_rank": 7,
+      "tech": ["Unreal Engine", "MCP", "Python"],
+      "completion_pct": 5,
+      "state": "placeholder",
+      "revenue_model": "potential-dev-tool",
+      "sprint_week": null,
+      "tasks": [
+        { "task": "Decide: build out or archive", "done": false }
+      ]
+    }
+  ],
+  "weekly_schedule": {
+    "week_1": {
+      "theme": "Launch Foundation & Quick Wins",
+      "focus": ["GitHub profile overhaul", "Arcadia Tracker launch prep", "Portfolio website migration"],
+      "deliverables": [
+        "GitHub profile README created",
+        "All repos have descriptions and topics",
+        "Arcadia Tracker on itch.io (free beta)",
+        "Portfolio website migrated to free hosting"
+      ]
+    },
+    "week_2": {
+      "theme": "Revenue Activation",
+      "focus": ["Arcadia Tracker paid launch", "Portfolio business launch", "Cowork-Skills listing"],
+      "deliverables": [
+        "Arcadia Tracker paid tier live ($4.99)",
+        "Portfolio templates available for clients",
+        "Cowork-Skills on Gumroad",
+        "Marketing started across communities"
+      ]
+    },
+    "week_3": {
+      "theme": "Growth & WizardJam",
+      "focus": ["WizardJam 2.0 demo", "Marketing content", "Polish all projects"],
+      "deliverables": [
+        "WizardJam 2.0 playable demo",
+        "Gameplay videos for all projects",
+        "Bug fixes from user feedback",
+        "All portfolio pieces polished"
+      ]
+    }
+  }
+}

@@ -1,0 +1,263 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.CataclysmPlannerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Cataclysm Survival Planner" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Prepare your base for the coming waves"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <!-- Summary Cards -->
+        <UniformGrid Grid.Row="1" Columns="5" Margin="0,0,0,16">
+            <!-- Readiness Score -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="READINESS" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="ReadinessText" Text="0%"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Time to Wave -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="NEXT WAVE" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="TimeToWaveText" Text="--"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource WarningBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Tasks Complete -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="TASKS DONE" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="TasksText" Text="0/0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource SuccessBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Critical Tasks -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="CRITICAL" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="CriticalText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource ErrorBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Defense Score -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="DEFENSE" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="DefenseText" Text="0%"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource SecondaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Content Area -->
+        <TabControl Grid.Row="2" Background="{StaticResource BackgroundBrush}" BorderThickness="0">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="16,8"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BackgroundBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- Tasks Tab -->
+            <TabItem Header="Survival Tasks">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="TasksList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8" Padding="16,12" CornerRadius="8"
+                                        Background="{StaticResource SurfaceLightBrush}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Checkbox -->
+                                        <Border Grid.Column="0" Width="24" Height="24" CornerRadius="4"
+                                                Margin="0,0,16,0" VerticalAlignment="Top">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                            <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="✓" FontSize="14" HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" Foreground="White"
+                                                       Visibility="{Binding IsCompleted, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        </Border>
+
+                                        <!-- Task Details -->
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding Description}" FontSize="12"
+                                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                                       TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                            <TextBlock FontSize="11" Margin="0,4,0,0">
+                                                <Run Text="Category: " Foreground="{StaticResource TextMutedBrush}"/>
+                                                <Run Text="{Binding Category}" Foreground="{StaticResource PrimaryBrush}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <!-- Priority Badge -->
+                                        <Border Grid.Column="2" Padding="8,4" CornerRadius="4"
+                                                VerticalAlignment="Top">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Priority}" Value="Critical">
+                                                            <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Priority}" Value="High">
+                                                            <Setter Property="Background" Value="{StaticResource WarningBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Priority}" FontSize="10" FontWeight="Bold"
+                                                       Foreground="White"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Resources Tab -->
+            <TabItem Header="Resources Needed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="ResourcesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding ResourceType}" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <ProgressBar Value="{Binding FulfillmentPercent}" Maximum="100"
+                                                         Style="{StaticResource SciFiProgressBar}"
+                                                         Height="8" Margin="0,8,0,0"/>
+                                            <TextBlock FontSize="11" Margin="0,4,0,0">
+                                                <Run Text="{Binding CurrentAmount}" Foreground="{StaticResource PrimaryBrush}"/>
+                                                <Run Text=" / " Foreground="{StaticResource TextMutedBrush}"/>
+                                                <Run Text="{Binding RequiredAmount}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" MinWidth="80">
+                                            <TextBlock HorizontalAlignment="Right">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                                                        <Setter Property="Text" Value="{Binding Deficit, StringFormat='Need {0}'}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSatisfied}" Value="True">
+                                                                <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                                                <Setter Property="Text" Value="Ready"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Defenses Tab -->
+            <TabItem Header="Defense Recommendations">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="DefensesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Text="{Binding StructureType}"
+                                                       FontSize="16" FontWeight="Bold"
+                                                       Foreground="{StaticResource PrimaryBrush}"/>
+                                            <TextBlock Grid.Column="1">
+                                                <Run Text="{Binding CurrentCount}" FontWeight="Bold"/>
+                                                <Run Text=" / " Foreground="{StaticResource TextMutedBrush}"/>
+                                                <Run Text="{Binding RecommendedCount}" FontWeight="Bold"/>
+                                            </TextBlock>
+                                        </Grid>
+
+                                        <TextBlock Text="{Binding Reason}" FontSize="12"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   Margin="0,8,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

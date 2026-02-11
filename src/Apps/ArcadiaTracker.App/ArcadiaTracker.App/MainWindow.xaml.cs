@@ -34,6 +34,24 @@ public partial class MainWindow : Window
     private readonly AchievementsView _achievementsView;
     private readonly NotificationsView _notificationsView;
 
+    // Phase 5 views
+    private readonly BlueprintView _blueprintView;
+    private readonly BottleneckView _bottleneckView;
+    private readonly BuildPlannerView _buildPlannerView;
+    private readonly CataclysmPlannerView _cataclysmPlannerView;
+    private readonly ChallengeTrackerView _challengeTrackerView;
+    private readonly DepletionForecastView _depletionForecastView;
+    private readonly ExpansionAdvisorView _expansionAdvisorView;
+    private readonly LogisticsHeatmapView _logisticsHeatmapView;
+    private readonly PowerGridView _powerGridView;
+    private readonly RatioCalculatorView _ratioCalculatorView;
+    private readonly RecordsView _recordsView;
+    private readonly ResearchPathView _researchPathView;
+    private readonly SessionDiffView _sessionDiffView;
+    private readonly SpeedrunView _speedrunView;
+    private readonly TimeLapseView _timeLapseView;
+    private readonly WizardView _wizardView;
+
     // Premium views (created only when entitled)
     private SaveEditorView? _saveEditorView;
     private SaveInspectorView? _saveInspectorView;
@@ -53,6 +71,24 @@ public partial class MainWindow : Window
     private readonly ExportService _exportService;
     private readonly SteamAchievementService _achievementService;
     private readonly NotificationService _notificationService;
+
+    // Phase 5 services
+    private readonly BlueprintService _blueprintService;
+    private readonly BottleneckAnalyzerService _bottleneckService;
+    private readonly BuildPlannerService _buildPlannerService;
+    private readonly CataclysmPlannerService _cataclysmPlannerService;
+    private readonly ChallengeTrackerService _challengeService;
+    private readonly DepletionForecastService _depletionService;
+    private readonly ExpansionAdvisorService _expansionService;
+    private readonly LogisticsHeatmapService _logisticsService;
+    private readonly PowerGridAnalyzerService _powerGridService;
+    private readonly RatioCalculatorService _ratioService;
+    private readonly RecordsService _recordsService;
+    private readonly ResearchPathService _researchPathService;
+    private readonly SessionDiffService _sessionDiffService;
+    private readonly SnapshotService _snapshotService;
+    private readonly SpeedrunService _speedrunService;
+    private readonly WizardService _wizardService;
 
     // Entitlement services
     private readonly CapabilityGatedPluginLoader _pluginLoader;
@@ -83,6 +119,24 @@ public partial class MainWindow : Window
         _achievementService = App.Services.GetRequiredService<SteamAchievementService>();
         _notificationService = App.Services.GetRequiredService<NotificationService>();
 
+        // Get Phase 5 services from DI
+        _blueprintService = App.Services.GetRequiredService<BlueprintService>();
+        _bottleneckService = App.Services.GetRequiredService<BottleneckAnalyzerService>();
+        _buildPlannerService = App.Services.GetRequiredService<BuildPlannerService>();
+        _cataclysmPlannerService = App.Services.GetRequiredService<CataclysmPlannerService>();
+        _challengeService = App.Services.GetRequiredService<ChallengeTrackerService>();
+        _depletionService = App.Services.GetRequiredService<DepletionForecastService>();
+        _expansionService = App.Services.GetRequiredService<ExpansionAdvisorService>();
+        _logisticsService = App.Services.GetRequiredService<LogisticsHeatmapService>();
+        _powerGridService = App.Services.GetRequiredService<PowerGridAnalyzerService>();
+        _ratioService = App.Services.GetRequiredService<RatioCalculatorService>();
+        _recordsService = App.Services.GetRequiredService<RecordsService>();
+        _researchPathService = App.Services.GetRequiredService<ResearchPathService>();
+        _sessionDiffService = App.Services.GetRequiredService<SessionDiffService>();
+        _snapshotService = App.Services.GetRequiredService<SnapshotService>();
+        _speedrunService = App.Services.GetRequiredService<SpeedrunService>();
+        _wizardService = App.Services.GetRequiredService<WizardService>();
+
         // Entitlement services
         _pluginLoader = App.Services.GetRequiredService<CapabilityGatedPluginLoader>();
 
@@ -99,6 +153,26 @@ public partial class MainWindow : Window
         _exportView = new ExportView();
         _achievementsView = new AchievementsView();
         _notificationsView = new NotificationsView();
+
+        // Phase 5 views
+        _blueprintView = new BlueprintView();
+        _bottleneckView = new BottleneckView();
+        _buildPlannerView = new BuildPlannerView();
+        _buildPlannerView.DataContext = App.Services.GetRequiredService<BuildPlannerViewModel>();
+        _cataclysmPlannerView = new CataclysmPlannerView();
+        _challengeTrackerView = new ChallengeTrackerView();
+        _depletionForecastView = new DepletionForecastView();
+        _expansionAdvisorView = new ExpansionAdvisorView();
+        _logisticsHeatmapView = new LogisticsHeatmapView();
+        _powerGridView = new PowerGridView();
+        _ratioCalculatorView = new RatioCalculatorView();
+        _recordsView = new RecordsView();
+        _researchPathView = new ResearchPathView();
+        _sessionDiffView = new SessionDiffView();
+        _speedrunView = new SpeedrunView(App.Services.GetRequiredService<SpeedrunViewModel>());
+        _timeLapseView = new TimeLapseView();
+        _wizardView = new WizardView();
+        _wizardView.SetViewModel(App.Services.GetRequiredService<WizardViewModel>());
 
         // Wire up settings backup/restore events
         _settingsView.BackupRequested += async (s, savePath) =>
@@ -261,6 +335,53 @@ public partial class MainWindow : Window
                 var achieveResult = await _achievementService.GetAchievementSummaryAsync(save);
                 if (achieveResult.IsSuccess)
                     _achievementsView.UpdateAchievements(achieveResult.Value!);
+
+                // Phase 5: New view data updates
+                var bottleneckResult = _bottleneckService.AnalyzeBottlenecks(save);
+                if (bottleneckResult.IsSuccess)
+                    _bottleneckView.UpdateAnalysis(bottleneckResult.Value!);
+
+                var powerGridResult = _powerGridService.AnalyzePowerGrid(save);
+                if (powerGridResult.IsSuccess)
+                    _powerGridView.UpdateAnalysis(powerGridResult.Value!);
+
+                var cataclysmPlanResult = _cataclysmPlannerService.GeneratePlan(save);
+                if (cataclysmPlanResult.IsSuccess)
+                    _cataclysmPlannerView.UpdatePlan(cataclysmPlanResult.Value!);
+
+                var challengeResult = _challengeService.GetChallengeTracker(save);
+                if (challengeResult.IsSuccess)
+                    _challengeTrackerView.UpdateChallenges(challengeResult.Value!);
+
+                var depletionResult = _depletionService.GenerateForecast(save);
+                if (depletionResult.IsSuccess)
+                    _depletionForecastView.UpdateForecast(depletionResult.Value!);
+
+                var expansionResult = _expansionService.AnalyzeExpansion(save);
+                if (expansionResult.IsSuccess)
+                    _expansionAdvisorView.UpdatePlan(expansionResult.Value!);
+
+                var heatmapResult = _logisticsService.GenerateHeatmap(save);
+                if (heatmapResult.IsSuccess)
+                    _logisticsHeatmapView.UpdateHeatmap(heatmapResult.Value!);
+
+                _ratioCalculatorView.SetCurrentSave(save);
+
+                var blueprintResult = await _blueprintService.GetLibraryAsync();
+                if (blueprintResult.IsSuccess)
+                    _blueprintView.UpdateLibrary(blueprintResult.Value!);
+
+                var researchPathResult = await _researchPathService.GeneratePathAsync(save.Crafting);
+                if (researchPathResult.IsSuccess)
+                    _researchPathView.UpdatePath(researchPathResult.Value!);
+
+                var recordsResult = await _recordsService.LoadRecordsAsync();
+                if (recordsResult.IsSuccess)
+                    _recordsView.UpdateRecords(recordsResult.Value!);
+
+                var snapshotSessions = _snapshotService.GetSessionsWithSnapshots();
+                if (snapshotSessions.IsSuccess)
+                    _timeLapseView.UpdateSessions(snapshotSessions.Value!);
             }
         };
 
@@ -384,19 +505,41 @@ public partial class MainWindow : Window
         {
             var newContent = tag switch
             {
+                // Overview
                 "Dashboard" => (object)_dashboardView,
+                "Wizard" => _wizardView,
+                // Analytics
                 "Progression" => _progressionView,
-                "Map" => _nativeMapView,
-                "Roadmap" => _roadmapView,
+                "Records" => _recordsView,
+                "SessionDiff" => _sessionDiffView,
+                "TimeLapse" => _timeLapseView,
+                "Speedrun" => _speedrunView,
+                // Base Management
                 "Production" => _productionView,
+                "PowerGrid" => _powerGridView,
+                "RatioCalculator" => _ratioCalculatorView,
+                "Bottleneck" => _bottleneckView,
+                "LogisticsHeatmap" => _logisticsHeatmapView,
+                // Strategy
                 "Research" => _researchView,
+                "ResearchPath" => _researchPathView,
+                "CataclysmPlanner" => _cataclysmPlannerView,
+                "BuildPlanner" => _buildPlannerView,
+                "DepletionForecast" => _depletionForecastView,
+                // Exploration
+                "Map" => _nativeMapView,
+                "Blueprints" => _blueprintView,
+                "ExpansionAdvisor" => _expansionAdvisorView,
+                "ChallengeTracker" => _challengeTrackerView,
+                // Meta
+                "Roadmap" => _roadmapView,
                 "Sessions" => _sessionsView,
                 "PlayStats" => _playStatsView,
                 "Achievements" => _achievementsView,
                 "Export" => _exportView,
                 "Notifications" => _notificationsView,
                 "Settings" => _settingsView,
-                // Premium views
+                // Premium (capability-gated)
                 "SaveEditor" => (object?)_saveEditorView ?? _dashboardView,
                 "SaveInspector" => (object?)_saveInspectorView ?? _dashboardView,
                 "BackupManager" => (object?)_backupManagerView ?? _dashboardView,

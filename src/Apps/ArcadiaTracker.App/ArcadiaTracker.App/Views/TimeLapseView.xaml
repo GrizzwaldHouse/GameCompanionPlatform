@@ -1,0 +1,131 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.TimeLapseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="Time-Lapse Replay" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="Watch your base grow over time"
+                       Style="{StaticResource SubheaderTextStyle}"/>
+        </StackPanel>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Session List -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,16,0">
+                <StackPanel>
+                    <TextBlock Text="Sessions" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+
+                    <ListBox x:Name="SessionList"
+                             ItemsSource="{Binding AvailableSessions}"
+                             SelectedItem="{Binding SelectedSession}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             MaxHeight="400">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Padding="8,6"
+                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <TextBlock x:Name="StatusText" Text="{Binding StatusMessage}"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               FontSize="12" Margin="0,12,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Snapshot Viewer -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Snapshot Info Display -->
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Visibility="{Binding HasSnapshots, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Text="📸" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+
+                        <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="24">
+                            <StackPanel>
+                                <TextBlock Text="{Binding SelectedSnapshot.Phase}"
+                                           FontSize="24" FontWeight="Bold"
+                                           Foreground="{StaticResource PrimaryBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding SelectedSnapshot.ProgressPercent, StringFormat={}{0:F1}% Complete}"
+                                           FontSize="16"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                <TextBlock Text="{Binding SelectedSnapshot.PlayTime, StringFormat=Play Time: {0:hh\\:mm\\:ss}}"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Empty State -->
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Visibility="{Binding HasSnapshots, Converter={StaticResource BoolToVisibilityInverse}}">
+                        <TextBlock Text="No Snapshots" FontSize="18"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Snapshots are created automatically as you play"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   FontSize="12" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                    </StackPanel>
+
+                    <!-- Timeline Slider -->
+                    <StackPanel Grid.Row="1" Margin="0,16,0,0">
+                        <Slider x:Name="TimelineSlider"
+                                Minimum="0"
+                                Maximum="{Binding TotalSnapshots}"
+                                Value="{Binding CurrentIndex}"
+                                IsEnabled="{Binding HasSnapshots}"/>
+
+                        <Grid Margin="0,8,0,0">
+                            <TextBlock Text="{Binding CurrentIndex, StringFormat=Snapshot {0}}"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       FontSize="12"/>
+                            <TextBlock Text="{Binding TotalSnapshots, StringFormat=of {0}}"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       FontSize="12" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Playback Controls -->
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,16,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="⏮" Command="{Binding GoToStartCommand}" Width="40" Margin="4"/>
+                <Button Content="◀" Command="{Binding StepBackwardCommand}" Width="40" Margin="4"/>
+                <Button x:Name="PlayPauseButton" Content="▶" Width="60" Margin="4"
+                        Command="{Binding PlayCommand}"/>
+                <Button Content="▶" Command="{Binding StepForwardCommand}" Width="40" Margin="4"/>
+                <Button Content="⏭" Command="{Binding GoToEndCommand}" Width="40" Margin="4"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

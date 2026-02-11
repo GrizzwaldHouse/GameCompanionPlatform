@@ -1,0 +1,259 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.PowerGridView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Power Grid Analyzer" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Monitor power generation, consumption, and brownout risks"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <!-- Summary Cards -->
+        <UniformGrid Grid.Row="1" Columns="5" Margin="0,0,0,16">
+            <!-- Total Generation -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="GENERATION" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="GenerationText" Text="0 MW"
+                               FontSize="24" FontWeight="Bold"
+                               Foreground="{StaticResource SuccessBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Total Consumption -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="CONSUMPTION" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="ConsumptionText" Text="0 MW"
+                               FontSize="24" FontWeight="Bold"
+                               Foreground="{StaticResource WarningBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Balance -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="BALANCE" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="BalanceText" Text="+0 MW"
+                               FontSize="24" FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Utilization -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="UTILIZATION" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="UtilizationText" Text="0%"
+                               FontSize="24" FontWeight="Bold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Status -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="STATUS" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="StatusText" Text="Unknown"
+                               FontSize="24" FontWeight="Bold"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Content Area -->
+        <TabControl Grid.Row="2" Background="{StaticResource BackgroundBrush}" BorderThickness="0">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="16,8"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BackgroundBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- Networks Tab -->
+            <TabItem Header="Networks">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="NetworkList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" FontSize="16" FontWeight="Bold"
+                                                       Foreground="{StaticResource PrimaryBrush}">
+                                                <Run Text="Network #"/><Run Text="{Binding NetworkId}"/>
+                                            </TextBlock>
+
+                                            <Border Grid.Column="1" Padding="8,4" CornerRadius="4">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{StaticResource SurfaceLightBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsBrownoutRisk}" Value="True">
+                                                                <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Bold"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <UniformGrid Columns="3" Margin="0,12,0,0">
+                                            <StackPanel>
+                                                <TextBlock Text="Generation" FontSize="11"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock FontSize="18" FontWeight="Bold"
+                                                           Foreground="{StaticResource SuccessBrush}">
+                                                    <Run Text="{Binding Generation, StringFormat='{}{0:F0}'}"/>
+                                                    <Run Text=" MW" FontSize="12" FontWeight="Normal"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="Consumption" FontSize="11"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock FontSize="18" FontWeight="Bold"
+                                                           Foreground="{StaticResource WarningBrush}">
+                                                    <Run Text="{Binding Consumption, StringFormat='{}{0:F0}'}"/>
+                                                    <Run Text=" MW" FontSize="12" FontWeight="Normal"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="Nodes" FontSize="11"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding Nodes.Count}" FontSize="18" FontWeight="Bold"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            </StackPanel>
+                                        </UniformGrid>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Warnings Tab -->
+            <TabItem Header="Warnings">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <ItemsControl x:Name="WarningList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="16,12" CornerRadius="8">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{StaticResource SurfaceLightBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Severity}" Value="Critical">
+                                                        <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
+                                                        <Setter Property="BorderThickness" Value="2,0,0,0"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                                                        <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}"/>
+                                                        <Setter Property="BorderThickness" Value="2,0,0,0"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Message}" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding Suggestion}" FontSize="12"
+                                                       Foreground="{StaticResource PrimaryBrush}"
+                                                       Margin="0,8,0,0" FontStyle="Italic"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock x:Name="NoWarningsText" Text="No power warnings - grid is healthy!"
+                                   Foreground="{StaticResource SuccessBrush}"
+                                   HorizontalAlignment="Center" Margin="0,24"
+                                   Visibility="Collapsed"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Suggestions Tab -->
+            <TabItem Header="Suggestions">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="SuggestionList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}">
+                                                <Run Text="Add "/><Run Text="{Binding RecommendedGeneratorType}"/>
+                                                <Run Text=" to Network #"/><Run Text="{Binding TargetNetworkId}"/>
+                                            </TextBlock>
+                                            <TextBlock FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"
+                                                       Margin="0,4,0,0">
+                                                <Run Text="Power deficit: "/>
+                                                <Run Text="{Binding PowerDeficit, StringFormat='{}{0:F0} MW'}"
+                                                     Foreground="{StaticResource ErrorBrush}"/>
+                                            </TextBlock>
+                                            <TextBlock FontSize="11" Foreground="{StaticResource TextMutedBrush}"
+                                                       Margin="0,4,0,0">
+                                                <Run Text="Suggested position: ("/>
+                                                <Run Text="{Binding SuggestedPosition.X, StringFormat='{}{0:F0}'}"/>
+                                                <Run Text=", "/>
+                                                <Run Text="{Binding SuggestedPosition.Y, StringFormat='{}{0:F0}'}"/>
+                                                <Run Text=")"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

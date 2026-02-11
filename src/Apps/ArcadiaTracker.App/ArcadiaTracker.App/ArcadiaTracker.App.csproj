@@ -9,7 +9,12 @@
     <AssemblyName>ArcadiaTracker</AssemblyName>
     <Product>Arcadia Tracker</Product>
     <Description>An unofficial companion app for StarRupture - track progression, explore maps, and analyze saves</Description>
+    <ApplicationIcon>Assets\app-icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\app-icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\GameCompanion.Core\GameCompanion.Core.csproj" />

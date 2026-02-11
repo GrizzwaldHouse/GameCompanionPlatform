@@ -1,0 +1,235 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.SpeedrunView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Speedrun Timer" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="Track your speedrun attempts and compete against your personal bests"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,0,0,24"/>
+
+            <!-- Error Message -->
+            <Border x:Name="ErrorPanel" Background="{StaticResource ErrorBrush}" CornerRadius="4" Padding="12"
+                    Margin="0,0,0,16" Visibility="Collapsed">
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="White" FontWeight="SemiBold"/>
+            </Border>
+
+            <!-- Category Selection -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Category" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+
+                    <ComboBox x:Name="CategoryComboBox"
+                              ItemsSource="{Binding Categories}"
+                              SelectedItem="{Binding SelectedCategory}"
+                              DisplayMemberPath="Name"
+                              Padding="12,8"
+                              FontSize="14"/>
+
+                    <TextBlock Text="{Binding SelectedCategory.Description}"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               FontSize="12" Margin="0,8,0,0"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Timer Display -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Current Time" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               HorizontalAlignment="Center" Margin="0,0,0,8"/>
+
+                    <TextBlock Text="{Binding CurrentTimeDisplay}"
+                               FontSize="48" FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryBrush}"
+                               HorizontalAlignment="Center"
+                               FontFamily="Consolas"/>
+
+                    <!-- Control Buttons -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,24,0,0">
+                        <Button x:Name="StartButton" Content="Start"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Command="{Binding StartRunCommand}"
+                                CommandParameter="{Binding SelectedCategory.Id}"
+                                Margin="0,0,8,0" Width="100"/>
+
+                        <Button x:Name="StopButton" Content="Stop"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Command="{Binding EndRunCommand}"
+                                Visibility="Collapsed"
+                                Margin="0,0,8,0" Width="100"/>
+
+                        <Button Content="Reset"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Command="{Binding ResetCommand}"
+                                Width="100"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Comparison Panel -->
+            <Border x:Name="ComparisonPanel" Style="{StaticResource CardStyle}" Margin="0,0,0,16"
+                    Visibility="Collapsed">
+                <UniformGrid Columns="2">
+                    <StackPanel Margin="0,0,16,0">
+                        <TextBlock Text="Personal Best" FontSize="12"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock Text="{Binding PersonalBestDisplay}"
+                                   FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource SecondaryBrush}"
+                                   FontFamily="Consolas"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Sum of Best" FontSize="12"
+                                   Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock Text="{Binding SumOfBestDisplay}"
+                                   FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource WarningBrush}"
+                                   FontFamily="Consolas"/>
+                    </StackPanel>
+                </UniformGrid>
+            </Border>
+
+            <!-- Splits List -->
+            <Border x:Name="SplitsPanel" Style="{StaticResource CardStyle}"
+                    Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="Splits" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <ItemsControl x:Name="SplitsList" ItemsSource="{Binding Splits}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8" Padding="12" CornerRadius="4"
+                                        BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{StaticResource SurfaceLightBrush}"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{StaticResource SuccessBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Split Number -->
+                                        <Border Width="24" Height="24" CornerRadius="12"
+                                                Margin="0,0,12,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                            <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Order}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                       FontSize="11" FontWeight="Bold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        </Border>
+
+                                        <!-- Split Name -->
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Name}"
+                                                   FontSize="14" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   VerticalAlignment="Center"/>
+
+                                        <!-- Split Time -->
+                                        <TextBlock Grid.Column="2"
+                                                   FontFamily="Consolas" FontSize="14"
+                                                   VerticalAlignment="Center" Margin="0,0,12,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="—"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                            <Setter Property="Text">
+                                                                <Setter.Value>
+                                                                    <Binding Path="SplitTime" StringFormat="hh\:mm\:ss\.ff"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <!-- Delta from PB -->
+                                        <TextBlock Grid.Column="3"
+                                                   FontFamily="Consolas" FontSize="12" FontWeight="Bold"
+                                                   VerticalAlignment="Center" MinWidth="80"
+                                                   TextAlignment="Right">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value=""/>
+                                                    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Delta.IsAhead}" Value="True">
+                                                            <Setter Property="Text" Value="{Binding Delta.Display}"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Delta.IsAhead}" Value="False">
+                                                            <Setter Property="Text" Value="{Binding Delta.Display}"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Instructions (shown when no session active) -->
+            <Border x:Name="InstructionsPanel" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="How to Speedrun" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+
+                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" LineHeight="20">
+                        <Run Text="1. Select a category from the dropdown above"/>
+                        <LineBreak/>
+                        <Run Text="2. Click 'Start' to begin your run"/>
+                        <LineBreak/>
+                        <Run Text="3. Complete splits by reaching checkpoints in-game"/>
+                        <LineBreak/>
+                        <Run Text="4. Your time will be compared to your Personal Best (PB)"/>
+                        <LineBreak/>
+                        <Run Text="5. Green deltas mean you're ahead, red means behind"/>
+                        <LineBreak/>
+                        <Run Text="6. Best individual split times are tracked for optimization"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

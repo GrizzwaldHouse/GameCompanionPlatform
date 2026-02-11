@@ -1,0 +1,311 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.BlueprintView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Blueprint Library" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Store and manage your factory layouts"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <!-- Summary Cards -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Total Blueprints -->
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="TOTAL BLUEPRINTS" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="TotalCountText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Categories -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="CATEGORIES" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="CategoryCountText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource SecondaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Selected Info -->
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="SELECTED" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="SelectedCountText" Text="--"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource SuccessBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Refresh Button -->
+            <Border Grid.Column="3" Style="{StaticResource CardStyle}">
+                <Button x:Name="RefreshButton" Content="Refresh"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Click="RefreshButton_Click"/>
+            </Border>
+        </Grid>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Sidebar: Blueprint List -->
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="8,0,8,8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Category Filter -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                        <TextBlock Text="Filter by Category" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+                        <ComboBox x:Name="CategoryFilterCombo"
+                                  Background="{StaticResource SurfaceLightBrush}"
+                                  Foreground="{StaticResource TextPrimaryBrush}"
+                                  BorderBrush="{StaticResource PrimaryBrush}"
+                                  SelectionChanged="CategoryFilter_SelectionChanged"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="1" Text="Blueprints" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+
+                    <!-- Blueprint List -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="BlueprintList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="12" CornerRadius="6"
+                                            Background="{StaticResource SurfaceLightBrush}"
+                                            Cursor="Hand"
+                                            MouseLeftButtonDown="BlueprintItem_Click">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Name -->
+                                            <TextBlock Grid.Row="0" Text="{Binding Name}"
+                                                       FontWeight="SemiBold" FontSize="13"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+
+                                            <!-- Category Badge -->
+                                            <Border Grid.Row="1" Padding="6,2" CornerRadius="4"
+                                                    Background="{StaticResource PrimaryBrush}"
+                                                    HorizontalAlignment="Left" Margin="0,4,0,4">
+                                                <TextBlock Text="{Binding Category}" FontSize="9"
+                                                           FontWeight="Bold"
+                                                           Foreground="{StaticResource BackgroundBrush}"/>
+                                            </Border>
+
+                                            <!-- Entity Count -->
+                                            <TextBlock Grid.Row="2" FontSize="11"
+                                                       Foreground="{StaticResource TextMutedBrush}">
+                                                <Run Text="{Binding Stats.EntityCount}"/>
+                                                <Run Text=" entities"/>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Right Panel: Blueprint Details -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="0,0,8,8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Details Header -->
+                    <StackPanel Grid.Row="0" x:Name="DetailsHeader" Visibility="Collapsed">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="DetailsName" Text="" FontSize="20" FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <TextBlock x:Name="DetailsDescription" Text="" FontSize="12"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <Button Grid.Column="1" x:Name="ExportButton" Content="Export"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Click="ExportButton_Click"/>
+                        </Grid>
+
+                        <Separator Margin="0,16,0,16" Background="{StaticResource SurfaceLightBrush}"/>
+                    </StackPanel>
+
+                    <!-- Details Content -->
+                    <Grid Grid.Row="1">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel x:Name="DetailsContent" Visibility="Collapsed">
+                                <!-- Stats Section -->
+                                <TextBlock Text="Statistics" FontSize="16" FontWeight="SemiBold"
+                                           Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,12"/>
+
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Entity Count -->
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Entity Count:"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="DetailsEntityCount" Text="0"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               FontWeight="SemiBold" Margin="0,4"/>
+
+                                    <!-- Unique Types -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Unique Types:"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="DetailsUniqueTypes" Text="0"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               FontWeight="SemiBold" Margin="0,4"/>
+
+                                    <!-- Power -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Estimated Power:"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="DetailsPower" Text="0 MW"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               FontWeight="SemiBold" Margin="0,4"/>
+
+                                    <!-- Dimensions -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Dimensions:"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="DetailsDimensions" Text="0 x 0"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               FontWeight="SemiBold" Margin="0,4"/>
+                                </Grid>
+
+                                <!-- Entity Breakdown Section -->
+                                <TextBlock Text="Entity Breakdown" FontSize="16" FontWeight="SemiBold"
+                                           Foreground="{StaticResource PrimaryBrush}" Margin="0,16,0,12"/>
+
+                                <ItemsControl x:Name="EntityBreakdownList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,6" Padding="10" CornerRadius="4"
+                                                    Background="{StaticResource SurfaceLightBrush}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0" Text="{Binding Key}"
+                                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                                               VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Value}"
+                                                               Foreground="{StaticResource SuccessBrush}"
+                                                               FontWeight="Bold" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Metadata Section -->
+                                <TextBlock Text="Metadata" FontSize="16" FontWeight="SemiBold"
+                                           Foreground="{StaticResource PrimaryBrush}" Margin="0,24,0,12"/>
+
+                                <StackPanel>
+                                    <TextBlock Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4">
+                                        <Run Text="Created: "/>
+                                        <Run x:Name="DetailsCreated" Text=""
+                                             Foreground="{StaticResource TextPrimaryBrush}"/>
+                                    </TextBlock>
+                                    <TextBlock Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4">
+                                        <Run Text="Modified: "/>
+                                        <Run x:Name="DetailsModified" Text=""
+                                             Foreground="{StaticResource TextPrimaryBrush}"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- Empty State -->
+                        <StackPanel x:Name="EmptyState" VerticalAlignment="Center"
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="Select a blueprint" FontSize="18"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Choose a blueprint from the list to view details"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                        </StackPanel>
+
+                        <!-- Loading Indicator -->
+                        <StackPanel x:Name="LoadingIndicator" Visibility="Collapsed"
+                                    VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="Loading blueprints..." FontSize="18"
+                                       Foreground="{StaticResource PrimaryBrush}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Error Display -->
+                    <Border Grid.Row="2" x:Name="ErrorPanel" Visibility="Collapsed"
+                            Background="{StaticResource ErrorBrush}" Padding="12" CornerRadius="4"
+                            Margin="0,8,0,0">
+                        <TextBlock x:Name="ErrorText" Text="" FontSize="12"
+                                   Foreground="White" TextWrapping="Wrap"/>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

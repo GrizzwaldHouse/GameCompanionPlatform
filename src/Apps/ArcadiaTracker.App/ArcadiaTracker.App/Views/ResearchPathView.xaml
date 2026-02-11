@@ -1,0 +1,210 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.ResearchPathView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Research Path Optimizer" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Plan your research progression efficiently"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <!-- Summary Cards -->
+        <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,16">
+            <!-- Completion -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="RESEARCH COMPLETE" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="CompletionText" Text="0%"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Data Points Needed -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="DATA POINTS NEEDED" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="DataPointsText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource SecondaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- High Priority -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="HIGH PRIORITY" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="HighPriorityText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource WarningBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Available -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="AVAILABLE NOW" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="AvailableText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource SuccessBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Content Area -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Recommended Path -->
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Recommended Research Path" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="PathList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="12,10" CornerRadius="8"
+                                            Background="{StaticResource SurfaceLightBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Step Number -->
+                                            <Border Grid.Column="0" Width="32" Height="32" CornerRadius="16"
+                                                    Margin="0,0,12,0" VerticalAlignment="Top">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsUnlocked}" Value="True">
+                                                                <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding Order}" FontWeight="Bold"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                           Foreground="White"/>
+                                            </Border>
+
+                                            <!-- Node Details -->
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding Node.Name}" FontWeight="SemiBold"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                <TextBlock Text="{Binding Reason}" FontSize="11"
+                                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                                           Margin="0,4,0,0"/>
+                                            </StackPanel>
+
+                                            <!-- Cost -->
+                                            <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                                                       Foreground="{StaticResource SecondaryBrush}">
+                                                <Run Text="{Binding DataPointsCost}"/>
+                                                <Run Text=" DP" FontSize="10"/>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- High Priority & Available -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- High Priority -->
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="8,0,0,8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="High Priority Unlocks" FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{StaticResource WarningBrush}" Margin="0,0,0,12"/>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="HighPriorityList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Margin="0,0,0,4" Foreground="{StaticResource TextPrimaryBrush}">
+                                            <Run Text="•" Foreground="{StaticResource WarningBrush}"/>
+                                            <Run Text=" "/>
+                                            <Run Text="{Binding Name}"/>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- Available -->
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="8,8,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Recently Unlocked" FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{StaticResource SuccessBrush}" Margin="0,0,0,12"/>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="AvailableList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Margin="0,0,0,4" Foreground="{StaticResource TextPrimaryBrush}">
+                                            <Run Text="✓" Foreground="{StaticResource SuccessBrush}"/>
+                                            <Run Text=" "/>
+                                            <Run Text="{Binding Name}"/>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

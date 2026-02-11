@@ -50,6 +50,39 @@
         <GradientStop Color="{StaticResource BackgroundGradientEnd}" Offset="1"/>
     </LinearGradientBrush>
 
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Enhanced Background Gradients & Textures       -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Sidebar gradient with depth -->
+    <LinearGradientBrush x:Key="SidebarGradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#1A1A2E" Offset="0"/>
+        <GradientStop Color="#14141F" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Radial glow for main content area -->
+    <RadialGradientBrush x:Key="ContentGlowBrush" Center="0.3,0.3" RadiusX="0.8" RadiusY="0.8">
+        <GradientStop Color="#100F1A" Offset="0"/>
+        <GradientStop Color="#0A0A0F" Offset="1"/>
+    </RadialGradientBrush>
+
+    <!-- Subtle procedural noise texture overlay -->
+    <DrawingBrush x:Key="NoiseTextureBrush" TileMode="Tile" Viewport="0,0,4,4" ViewportUnits="Absolute" Opacity="0.05">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#FFFFFF">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,0,1,1"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#FFFFFF">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="2,2,1,1"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
     <!-- Glow shadow effects -->
     <DropShadowEffect x:Key="PrimaryGlowEffect"
                       Color="{StaticResource PrimaryColor}"
@@ -64,8 +97,19 @@
                       Color="#000000" ShadowDepth="2" BlurRadius="8" Opacity="0.3"/>
 
     <!-- ═══════════════════════════════════════════════ -->
-    <!-- View Transition Storyboard                     -->
+    <!-- Spacing System (8px base unit)                 -->
     <!-- ═══════════════════════════════════════════════ -->
+    <System:Double xmlns:System="clr-namespace:System;assembly=mscorlib" x:Key="Spacing.xs">4</System:Double>
+    <System:Double xmlns:System="clr-namespace:System;assembly=mscorlib" x:Key="Spacing.sm">8</System:Double>
+    <System:Double xmlns:System="clr-namespace:System;assembly=mscorlib" x:Key="Spacing.md">16</System:Double>
+    <System:Double xmlns:System="clr-namespace:System;assembly=mscorlib" x:Key="Spacing.lg">24</System:Double>
+    <System:Double xmlns:System="clr-namespace:System;assembly=mscorlib" x:Key="Spacing.xl">32</System:Double>
+    <System:Double xmlns:System="clr-namespace:System;assembly=mscorlib" x:Key="Spacing.2xl">48</System:Double>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Animation Storyboards                          -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- View fade-in transition (existing) -->
     <Storyboard x:Key="ViewFadeInStoryboard">
         <DoubleAnimation Storyboard.TargetProperty="Opacity"
                          From="0" To="1" Duration="0:0:0.3">
@@ -77,6 +121,39 @@
                          From="12" To="0" Duration="0:0:0.3">
             <DoubleAnimation.EasingFunction>
                 <QuadraticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+    </Storyboard>
+
+    <!-- Card entrance animation (slide in with fade) -->
+    <Storyboard x:Key="CardSlideInStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4">
+            <DoubleAnimation.EasingFunction>
+                <QuadraticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                         From="20" To="0" Duration="0:0:0.4">
+            <DoubleAnimation.EasingFunction>
+                <QuadraticEase EasingMode="EaseOut"/>
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+    </Storyboard>
+
+    <!-- Button press feedback animation -->
+    <Storyboard x:Key="ButtonPressStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                         From="1" To="0.96" Duration="0:0:0.08" AutoReverse="True"/>
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                         From="1" To="0.96" Duration="0:0:0.08" AutoReverse="True"/>
+    </Storyboard>
+
+    <!-- Status indicator glow pulse -->
+    <Storyboard x:Key="GlowPulseStoryboard" RepeatBehavior="Forever">
+        <DoubleAnimation Storyboard.TargetProperty="(Effect).Opacity"
+                         From="0.4" To="0.8" Duration="0:0:1.5" AutoReverse="True">
+            <DoubleAnimation.EasingFunction>
+                <SineEase EasingMode="EaseInOut"/>
             </DoubleAnimation.EasingFunction>
         </DoubleAnimation>
     </Storyboard>
@@ -128,6 +205,24 @@
         </Style.Triggers>
     </Style>
 
+    <!-- Enhanced card with deeper shadow and glow on hover -->
+    <Style x:Key="CardStyleEnhanced" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="#000000" ShadowDepth="2" BlurRadius="12" Opacity="0.4"/>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect Color="{StaticResource PrimaryColor}" ShadowDepth="0" BlurRadius="16" Opacity="0.3"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- ═══════════════════════════════════════════════ -->
     <!-- Primary Button Style (Enhanced with glow)      -->
     <!-- ═══════════════════════════════════════════════ -->
@@ -138,6 +233,12 @@
         <Setter Property="Padding" Value="16,8"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1" ScaleY="1"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -158,6 +259,9 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.5"/>
                         </Trigger>
+                        <EventTrigger RoutedEvent="Button.Click">
+                            <BeginStoryboard Storyboard="{StaticResource ButtonPressStoryboard}"/>
+                        </EventTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -173,6 +277,12 @@
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Padding" Value="16,8"/>
         <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1" ScaleY="1"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -192,6 +302,9 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.5"/>
                         </Trigger>
+                        <EventTrigger RoutedEvent="Button.Click">
+                            <BeginStoryboard Storyboard="{StaticResource ButtonPressStoryboard}"/>
+                        </EventTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -227,17 +340,29 @@
     </Style>
 
     <!-- ═══════════════════════════════════════════════ -->
-    <!-- Text Styles                                    -->
+    <!-- Text Styles (1.25 Typography Scale)           -->
     <!-- ═══════════════════════════════════════════════ -->
-    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+    <!-- Large heading for main page titles -->
+    <Style x:Key="HeadingLarge" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontSize" Value="37"/>
         <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="LineHeight" Value="44"/>
     </Style>
 
+    <!-- Standard header (upgraded from 24 to 28) -->
+    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="LineHeight" Value="34"/>
+    </Style>
+
+    <!-- Subheader (upgraded from 14 to 15 for scale alignment) -->
     <Style x:Key="SubheaderTextStyle" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="LineHeight" Value="22"/>
     </Style>
 
     <!-- Glowing stat number (for key dashboard figures) -->
@@ -345,6 +470,57 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Navigation Category Header Style               -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Navigation Category Header -->
+    <Style x:Key="NavCategoryHeaderStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+        <Setter Property="Margin" Value="16,16,16,4"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Dark Scrollbar for Sidebar                     -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Dark Scrollbar for sidebar -->
+    <Style x:Key="SidebarScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Style.Resources>
+            <Style TargetType="ScrollBar">
+                <Setter Property="Width" Value="6"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Style>
+                                            <Style TargetType="Thumb">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Thumb">
+                                                            <Border Background="{StaticResource SurfaceLightBrush}"
+                                                                    CornerRadius="3" Margin="1"/>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Thumb.Style>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
     </Style>
 
 </ResourceDictionary>

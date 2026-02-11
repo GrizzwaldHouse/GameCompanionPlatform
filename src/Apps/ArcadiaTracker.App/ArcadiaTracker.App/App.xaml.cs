@@ -117,6 +117,24 @@ public partial class App : Application
         services.AddSingleton<SaveSharingService>();
         services.AddSingleton<NotificationService>();
 
+        // Phase 5 Services
+        services.AddSingleton<BlueprintService>();
+        services.AddSingleton<BottleneckAnalyzerService>();
+        services.AddSingleton<BuildPlannerService>();
+        services.AddSingleton<CataclysmPlannerService>();
+        services.AddSingleton<ChallengeTrackerService>();
+        services.AddSingleton<DepletionForecastService>();
+        services.AddSingleton<ExpansionAdvisorService>();
+        services.AddSingleton<LogisticsHeatmapService>();
+        services.AddSingleton<PowerGridAnalyzerService>();
+        services.AddSingleton<RatioCalculatorService>();
+        services.AddSingleton<RecordsService>();
+        services.AddSingleton<ResearchPathService>();
+        services.AddSingleton<SessionDiffService>();
+        services.AddSingleton<SnapshotService>();
+        services.AddSingleton<SpeedrunService>();
+        services.AddSingleton<WizardService>();
+
         // ViewModels
         services.AddTransient<ViewModels.MainViewModel>();
         services.AddTransient<ViewModels.DashboardViewModel>();
@@ -132,6 +150,24 @@ public partial class App : Application
         services.AddTransient<ViewModels.ExportViewModel>();
         services.AddTransient<ViewModels.AchievementsViewModel>();
         services.AddTransient<ViewModels.NotificationsViewModel>();
+
+        // Phase 5 ViewModels
+        services.AddTransient<ViewModels.BlueprintViewModel>();
+        services.AddTransient<ViewModels.BottleneckViewModel>();
+        services.AddTransient<ViewModels.BuildPlannerViewModel>();
+        services.AddTransient<ViewModels.CataclysmPlannerViewModel>();
+        services.AddTransient<ViewModels.ChallengeTrackerViewModel>();
+        services.AddTransient<ViewModels.DepletionForecastViewModel>();
+        services.AddTransient<ViewModels.ExpansionAdvisorViewModel>();
+        services.AddTransient<ViewModels.LogisticsHeatmapViewModel>();
+        services.AddTransient<ViewModels.PowerGridViewModel>();
+        services.AddTransient<ViewModels.RatioCalculatorViewModel>();
+        services.AddTransient<ViewModels.RecordsViewModel>();
+        services.AddTransient<ViewModels.ResearchPathViewModel>();
+        services.AddTransient<ViewModels.SessionDiffViewModel>();
+        services.AddTransient<ViewModels.SpeedrunViewModel>();
+        services.AddTransient<ViewModels.TimeLapseViewModel>();
+        services.AddTransient<ViewModels.WizardViewModel>();
     }
 
     /// <summary>

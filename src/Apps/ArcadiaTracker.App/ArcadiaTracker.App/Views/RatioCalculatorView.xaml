@@ -1,0 +1,213 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.RatioCalculatorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Ratio Calculator" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Calculate machine requirements for target production rates"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <!-- Input Controls -->
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Item Selection -->
+                <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                    <TextBlock Text="TARGET ITEM" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                    <ComboBox x:Name="ItemComboBox"
+                              Background="{StaticResource SurfaceBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Padding="12,8"
+                              FontSize="14"
+                              SelectionChanged="ItemComboBox_SelectionChanged"/>
+                </StackPanel>
+
+                <!-- Rate Input -->
+                <StackPanel Grid.Column="1" Margin="0,0,16,0" Width="150">
+                    <TextBlock Text="TARGET RATE (per min)" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                    <TextBox x:Name="RateTextBox"
+                             Text="60"
+                             Background="{StaticResource SurfaceLightBrush}"
+                             Foreground="{StaticResource TextPrimaryBrush}"
+                             BorderBrush="{StaticResource SurfaceLightBrush}"
+                             Padding="12,8"
+                             FontSize="14"
+                             TextChanged="RateTextBox_TextChanged"/>
+                </StackPanel>
+
+                <!-- Calculate Button -->
+                <Button Grid.Column="2" Content="Calculate"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Padding="24,10"
+                        VerticalAlignment="Bottom"
+                        Click="CalculateButton_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- Results Area -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Requirements List -->
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Required Machines" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="RequirementsList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="12,10" CornerRadius="8"
+                                            Background="{StaticResource SurfaceLightBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding MachineType}" FontWeight="SemiBold"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                <TextBlock FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"
+                                                           Margin="0,4,0,0">
+                                                    <Run Text="Produces: "/>
+                                                    <Run Text="{Binding ProducesItem}" Foreground="{StaticResource PrimaryBrush}"/>
+                                                </TextBlock>
+                                                <TextBlock FontSize="11" Foreground="{StaticResource TextMutedBrush}"
+                                                           Margin="0,2,0,0">
+                                                    <Run Text="Rate: "/>
+                                                    <Run Text="{Binding ProductionRate, StringFormat='{}{0}/min'}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center"
+                                                        HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding RequiredCount}"
+                                                           FontSize="28" FontWeight="Bold"
+                                                           Foreground="{StaticResource SecondaryBrush}"
+                                                           HorizontalAlignment="Center"/>
+                                                <TextBlock Text="needed" FontSize="10"
+                                                           Foreground="{StaticResource TextMutedBrush}"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Comparison with Current Build -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Current vs Required" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <!-- Status Banner -->
+                    <Border Grid.Row="1" x:Name="StatusBanner" Padding="12,8" CornerRadius="6" Margin="0,0,0,16"
+                            Background="{StaticResource SurfaceLightBrush}">
+                        <TextBlock x:Name="StatusText" Text="Select an item to calculate"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="ComparisonList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="12,10" CornerRadius="8"
+                                            Background="{StaticResource SurfaceLightBrush}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Text="{Binding MachineType}"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       VerticalAlignment="Center"/>
+
+                                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
+                                                <Run Text="{Binding CurrentCount}" FontWeight="Bold"/>
+                                                <Run Text=" / " Foreground="{StaticResource TextMutedBrush}"/>
+                                                <Run Text="{Binding RequiredCount}" FontWeight="Bold"/>
+                                            </TextBlock>
+
+                                            <TextBlock Grid.Column="2" VerticalAlignment="Center" MinWidth="60">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Sufficient">
+                                                                <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                                                <Setter Property="Text" Value="OK"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="NeedMore">
+                                                                <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                                                                <Setter Property="Text" Value="{Binding Delta, StringFormat='Need +{0}'}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Excess">
+                                                                <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}"/>
+                                                                <Setter Property="Text" Value="Excess"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- No comparison message -->
+                    <TextBlock x:Name="NoComparisonText" Grid.Row="2"
+                               Text="Load a save file to compare with your current build"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="Collapsed"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

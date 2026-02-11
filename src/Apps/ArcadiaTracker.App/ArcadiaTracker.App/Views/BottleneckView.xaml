@@ -1,0 +1,173 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.BottleneckView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Bottleneck Detector" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Identify production issues and optimize your factory"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <!-- Summary Cards -->
+        <UniformGrid Grid.Row="1" Columns="5" Margin="0,0,0,16">
+            <!-- Total Machines -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="TOTAL MACHINES" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="TotalMachinesText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Health Score -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="HEALTH SCORE" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="HealthText" Text="0%"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource SuccessBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Critical -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="CRITICAL" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="CriticalText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource ErrorBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- High Priority -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="HIGH" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="HighText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource WarningBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Low Priority -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="LOW/MEDIUM" FontSize="11"
+                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock x:Name="LowMediumText" Text="0"
+                               FontSize="28" FontWeight="Bold"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Bottleneck List -->
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Detected Issues" FontSize="16" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="BottleneckList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8" Padding="16,12" CornerRadius="8"
+                                        Background="{StaticResource SurfaceLightBrush}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Severity Indicator -->
+                                        <Border Grid.Column="0" Width="8" CornerRadius="4" Margin="0,0,16,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Severity}" Value="Critical">
+                                                            <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Severity}" Value="High">
+                                                            <Setter Property="Background" Value="{StaticResource WarningBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Severity}" Value="Medium">
+                                                            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Severity}" Value="Low">
+                                                            <Setter Property="Background" Value="{StaticResource TextMutedBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+
+                                        <!-- Details -->
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding EntityType}" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding Reason}" FontSize="12"
+                                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                                       Margin="0,4,0,0"/>
+                                            <TextBlock Text="{Binding Recommendation}" FontSize="11"
+                                                       Foreground="{StaticResource PrimaryBrush}"
+                                                       Margin="0,4,0,0" FontStyle="Italic"/>
+                                        </StackPanel>
+
+                                        <!-- Position -->
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <TextBlock FontSize="11" Foreground="{StaticResource TextMutedBrush}">
+                                                <Run Text="X: "/><Run Text="{Binding Position.X, StringFormat='{}{0:F0}'}"/>
+                                            </TextBlock>
+                                            <TextBlock FontSize="11" Foreground="{StaticResource TextMutedBrush}">
+                                                <Run Text="Y: "/><Run Text="{Binding Position.Y, StringFormat='{}{0:F0}'}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- Empty State -->
+                <StackPanel x:Name="EmptyState" Visibility="Collapsed"
+                            VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1">
+                    <TextBlock Text="No bottlenecks detected!" FontSize="18"
+                               Foreground="{StaticResource SuccessBrush}"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Your production is running smoothly" FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

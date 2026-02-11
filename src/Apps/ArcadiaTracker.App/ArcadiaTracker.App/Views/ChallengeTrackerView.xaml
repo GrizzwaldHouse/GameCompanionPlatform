@@ -1,0 +1,342 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.ChallengeTrackerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ArcadiaTracker.App.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Header -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Challenge Mode Tracker" Style="{StaticResource HeaderTextStyle}"/>
+                    <Border Grid.Column="1"
+                            Background="{StaticResource PrimaryBrush}"
+                            CornerRadius="12" Padding="12,6">
+                        <TextBlock x:Name="CompletionCountText" Text="0 / 0"
+                                   Foreground="{StaticResource BackgroundBrush}"
+                                   FontWeight="Bold" FontSize="14"/>
+                    </Border>
+                </Grid>
+                <TextBlock Text="Track your challenge progress and objectives"
+                           Style="{StaticResource SubheaderTextStyle}" Margin="0,0,0,24"/>
+
+                <!-- Summary Card -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Summary" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                            <!-- Completed Count -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock Text="✓ Completed:"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Margin="0,0,8,0"/>
+                                <TextBlock x:Name="CompletedCountText" Text="0"
+                                           Foreground="{StaticResource SuccessBrush}"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <!-- In Progress Count -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock Text="⏳ In Progress:"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Margin="0,0,8,0"/>
+                                <TextBlock x:Name="InProgressCountText" Text="0"
+                                           Foreground="{StaticResource PrimaryBrush}"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <!-- Completion Percentage -->
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📊 Completion:"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Margin="0,0,8,0"/>
+                                <TextBlock x:Name="CompletionPercentText" Text="0%"
+                                           Foreground="{StaticResource SecondaryBrush}"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Progress Circle -->
+                        <Viewbox Grid.Column="1" Width="100" Height="100"
+                                 HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Grid Width="100" Height="100">
+                                <Ellipse Stroke="{StaticResource SurfaceLightBrush}"
+                                         StrokeThickness="10" Fill="Transparent"/>
+                                <Ellipse x:Name="ProgressCircle"
+                                         Stroke="{StaticResource PrimaryBrush}"
+                                         StrokeThickness="10" Fill="Transparent"
+                                         StrokeDashArray="251.2" StrokeDashOffset="251.2"/>
+                                <TextBlock x:Name="ProgressCircleText" Text="0%"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           FontSize="24" FontWeight="Bold"
+                                           Foreground="{StaticResource PrimaryBrush}"/>
+                            </Grid>
+                        </Viewbox>
+                    </Grid>
+                </Border>
+
+                <!-- Filter Buttons -->
+                <UniformGrid Columns="3" Margin="0,0,0,16">
+                    <Button x:Name="FilterAllButton"
+                            Content="All Challenges"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="FilterAll_Click"
+                            Margin="0,0,4,0"/>
+                    <Button x:Name="FilterInProgressButton"
+                            Content="In Progress"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="FilterInProgress_Click"
+                            Margin="4,0,4,0"/>
+                    <Button x:Name="FilterCompletedButton"
+                            Content="Completed"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="FilterCompleted_Click"
+                            Margin="4,0,0,0"/>
+                </UniformGrid>
+
+                <!-- Challenges List and Details -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Challenge List -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,8,0">
+                        <StackPanel>
+                            <TextBlock Text="Challenges" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                            <ScrollViewer MaxHeight="600" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="ChallengesList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,8" Padding="12,10" CornerRadius="8"
+                                                    Background="{Binding BackgroundBrush}"
+                                                    BorderThickness="2"
+                                                    BorderBrush="{Binding BorderBrush}"
+                                                    Cursor="Hand"
+                                                    MouseLeftButtonDown="Challenge_Click">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+
+                                                    <!-- Header -->
+                                                    <Grid Grid.Row="0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                                   FontWeight="SemiBold"
+                                                                   FontSize="14"/>
+
+                                                        <Border Grid.Column="1"
+                                                                Background="{Binding DifficultyBrush}"
+                                                                CornerRadius="6" Padding="6,3">
+                                                            <TextBlock Text="{Binding DifficultyDisplay}"
+                                                                       Foreground="{StaticResource BackgroundBrush}"
+                                                                       FontWeight="Bold" FontSize="10"/>
+                                                        </Border>
+                                                    </Grid>
+
+                                                    <!-- Category -->
+                                                    <TextBlock Grid.Row="1" Text="{Binding CategoryDisplay}"
+                                                               Foreground="{StaticResource TextMutedBrush}"
+                                                               FontSize="11" Margin="0,4,0,0"/>
+
+                                                    <!-- Description -->
+                                                    <TextBlock Grid.Row="2" Text="{Binding Description}"
+                                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                                               FontSize="12"
+                                                               Margin="0,6,0,0"
+                                                               TextWrapping="Wrap"/>
+
+                                                    <!-- Progress Bar -->
+                                                    <StackPanel Grid.Row="3" Margin="0,8,0,0">
+                                                        <ProgressBar Value="{Binding ProgressValue}" Maximum="100"
+                                                                     Height="6" Style="{StaticResource SciFiProgressBar}"/>
+                                                        <TextBlock Text="{Binding ProgressDisplay}"
+                                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                                   FontSize="10" Margin="0,4,0,0"
+                                                                   HorizontalAlignment="Right"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+
+                            <!-- Empty state -->
+                            <TextBlock x:Name="NoChallengesText"
+                                       Text="No challenges to display"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Visibility="Collapsed"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,16"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Challenge Details Panel -->
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Challenge Details" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                            <!-- No Selection State -->
+                            <TextBlock x:Name="NoSelectionText"
+                                       Text="Select a challenge to view details"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Margin="0,32"/>
+
+                            <!-- Challenge Details -->
+                            <StackPanel x:Name="DetailsPanel" Visibility="Collapsed">
+                                <!-- Challenge Name -->
+                                <TextBlock x:Name="DetailName"
+                                           FontSize="18" FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+                                <!-- Difficulty Badge -->
+                                <Border x:Name="DetailDifficultyBadge"
+                                        Width="80" Height="24"
+                                        CornerRadius="6" Padding="8,4"
+                                        HorizontalAlignment="Left" Margin="0,0,0,12">
+                                    <TextBlock x:Name="DetailDifficulty"
+                                               HorizontalAlignment="Center"
+                                               Foreground="{StaticResource BackgroundBrush}"
+                                               FontWeight="Bold" FontSize="11"/>
+                                </Border>
+
+                                <!-- Description -->
+                                <TextBlock x:Name="DetailDescription"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           TextWrapping="Wrap" Margin="0,0,0,16"/>
+
+                                <!-- Objectives Header -->
+                                <TextBlock Text="Objectives" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+
+                                <!-- Objectives List -->
+                                <ItemsControl x:Name="ObjectivesList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,8" Padding="8" CornerRadius="6"
+                                                    Background="{StaticResource SurfaceLightBrush}">
+                                                <StackPanel>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <TextBlock Text="{Binding StatusIcon}"
+                                                                   Margin="0,0,8,0" FontSize="14"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding Description}"
+                                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                                   TextWrapping="Wrap"/>
+                                                    </Grid>
+
+                                                    <StackPanel Margin="0,6,0,0">
+                                                        <ProgressBar Value="{Binding Progress}" Maximum="100"
+                                                                     Height="4" Style="{StaticResource SciFiProgressBar}"/>
+                                                        <TextBlock Text="{Binding ProgressText}"
+                                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                                   FontSize="10" Margin="0,2,0,0"
+                                                                   HorizontalAlignment="Right"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Rewards Header -->
+                                <TextBlock Text="Rewards" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}" Margin="0,16,0,8"/>
+
+                                <!-- Rewards List -->
+                                <ItemsControl x:Name="RewardsList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,6" Padding="8,6" CornerRadius="6"
+                                                    Background="{StaticResource SurfaceLightBrush}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="🎁" Margin="0,0,8,0"/>
+                                                    <TextBlock Text="{Binding DisplayText}"
+                                                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Completion Status -->
+                                <Border x:Name="CompletionStatusBorder"
+                                        Margin="0,16,0,0" Padding="12,8" CornerRadius="8"
+                                        Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Text="✅ Challenge Completed!"
+                                                   FontWeight="Bold" FontSize="14"
+                                                   Foreground="{StaticResource BackgroundBrush}"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="CompletionDateText"
+                                                   Foreground="{StaticResource BackgroundBrush}"
+                                                   FontSize="11" Margin="0,4,0,0"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Loading Overlay -->
+        <Border x:Name="LoadingOverlay" Background="#CC1A1A2E"
+                Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Loading challenges..." FontSize="18"
+                           Foreground="{StaticResource TextPrimaryBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Error Overlay -->
+        <Border x:Name="ErrorOverlay" Background="#CC1A1A2E"
+                Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+                <TextBlock Text="⚠️ Error" FontSize="20" FontWeight="Bold"
+                           Foreground="{StaticResource WarningBrush}"
+                           HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                <TextBlock x:Name="ErrorMessageText"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           TextWrapping="Wrap" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

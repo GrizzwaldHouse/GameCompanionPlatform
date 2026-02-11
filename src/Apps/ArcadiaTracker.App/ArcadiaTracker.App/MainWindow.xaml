@@ -6,11 +6,12 @@
         xmlns:local="clr-namespace:ArcadiaTracker.App"
         xmlns:views="clr-namespace:ArcadiaTracker.App.Views"
         mc:Ignorable="d"
+        Icon="Assets/app-icon.ico"
         Title="Arcadia Tracker"
         Height="800" Width="1200"
         MinHeight="600" MinWidth="900"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BackgroundBrush}">
+        Background="{StaticResource BackgroundGradientBrush}">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,9 +19,14 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Sidebar Navigation -->
-        <Border Grid.Column="0" Background="{StaticResource SurfaceBrush}">
-            <Grid>
+        <!-- Sidebar Navigation with layered gradient background -->
+        <Border Grid.Column="0">
+            <Border.Background>
+                <StaticResource ResourceKey="SidebarGradientBrush"/>
+            </Border.Background>
+            <!-- Subtle noise texture overlay -->
+            <Border Background="{StaticResource NoiseTextureBrush}">
+                <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -56,73 +62,242 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Navigation Items -->
-                <StackPanel Grid.Row="2" Margin="8,0">
-                    <RadioButton x:Name="NavDashboard"
-                                 Content="📊 Dashboard"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 IsChecked="True"
-                                 Checked="NavItem_Checked"
-                                 Tag="Dashboard"/>
-                    <RadioButton x:Name="NavProgression"
-                                 Content="📈 Progression"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Progression"/>
-                    <RadioButton x:Name="NavMap"
-                                 Content="🗺️ Interactive Map"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Map"/>
-                    <RadioButton x:Name="NavRoadmap"
-                                 Content="🎯 Roadmap"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Roadmap"/>
-                    <RadioButton x:Name="NavProduction"
-                                 Content="🏭 Production"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Production"/>
-                    <RadioButton x:Name="NavResearch"
-                                 Content="🔬 Research"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Research"/>
-                    <RadioButton x:Name="NavSessions"
-                                 Content="📅 Sessions"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Sessions"/>
-                    <RadioButton x:Name="NavPlayStats"
-                                 Content="📊 Play Stats"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="PlayStats"/>
-                    <RadioButton x:Name="NavAchievements"
-                                 Content="🏆 Achievements"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Achievements"/>
+                <!-- Navigation Items (scrollable, categorized) -->
+                <ScrollViewer Grid.Row="2" Style="{StaticResource SidebarScrollViewer}">
+                    <StackPanel Margin="8,0">
 
-                    <Separator Margin="8,16" Background="{StaticResource SurfaceLightBrush}"/>
+                        <!-- ═══ OVERVIEW ═══ -->
+                        <TextBlock Text="OVERVIEW" Style="{StaticResource NavCategoryHeaderStyle}"/>
+                        <RadioButton x:Name="NavDashboard"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     IsChecked="True"
+                                     Checked="NavItem_Checked"
+                                     Tag="Dashboard">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource DashboardIcon}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType=RadioButton}, Path=Foreground}"
+                                      Width="16" Height="16"
+                                      Margin="0,0,8,0"
+                                      Stretch="Uniform"
+                                      VerticalAlignment="Center"/>
+                                <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton x:Name="NavWizard"
+                                     Content="✨ What's Next"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Wizard"/>
 
-                    <RadioButton x:Name="NavExport"
-                                 Content="📤 Export"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Export"/>
-                    <RadioButton x:Name="NavNotifications"
-                                 Content="🔔 Notifications"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Notifications"/>
-                    <RadioButton x:Name="NavSettings"
-                                 Content="⚙️ Settings"
-                                 Style="{StaticResource NavButtonStyle}"
-                                 Checked="NavItem_Checked"
-                                 Tag="Settings"/>
-                </StackPanel>
+                        <!-- ═══ ANALYTICS ═══ -->
+                        <TextBlock Text="ANALYTICS" Style="{StaticResource NavCategoryHeaderStyle}"/>
+                        <RadioButton x:Name="NavProgression"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Progression">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource ProgressionIcon}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType=RadioButton}, Path=Foreground}"
+                                      Width="16" Height="16"
+                                      Margin="0,0,8,0"
+                                      Stretch="Uniform"
+                                      VerticalAlignment="Center"/>
+                                <TextBlock Text="Progression" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton x:Name="NavRecords"
+                                     Content="🏅 Records"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Records"/>
+                        <RadioButton x:Name="NavSessionDiff"
+                                     Content="📋 Session Diff"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="SessionDiff"/>
+                        <RadioButton x:Name="NavTimeLapse"
+                                     Content="⏳ Time Lapse"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="TimeLapse"/>
+                        <RadioButton x:Name="NavSpeedrun"
+                                     Content="⚡ Speedrun"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Speedrun"/>
+
+                        <!-- ═══ BASE MANAGEMENT ═══ -->
+                        <TextBlock Text="BASE MANAGEMENT" Style="{StaticResource NavCategoryHeaderStyle}"/>
+                        <RadioButton x:Name="NavProduction"
+                                     Content="🏭 Production"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Production"/>
+                        <RadioButton x:Name="NavPowerGrid"
+                                     Content="🔌 Power Grid"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="PowerGrid"/>
+                        <RadioButton x:Name="NavRatioCalculator"
+                                     Content="📐 Ratio Calculator"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="RatioCalculator"/>
+                        <RadioButton x:Name="NavBottleneck"
+                                     Content="🔎 Bottleneck"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Bottleneck"/>
+                        <RadioButton x:Name="NavLogisticsHeatmap"
+                                     Content="🗺️ Logistics"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="LogisticsHeatmap"/>
+
+                        <!-- ═══ STRATEGY ═══ -->
+                        <TextBlock Text="STRATEGY" Style="{StaticResource NavCategoryHeaderStyle}"/>
+                        <RadioButton x:Name="NavResearch"
+                                     Content="🔬 Research"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Research"/>
+                        <RadioButton x:Name="NavResearchPath"
+                                     Content="🧬 Research Path"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="ResearchPath"/>
+                        <RadioButton x:Name="NavCataclysmPlanner"
+                                     Content="🌋 Cataclysm Planner"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="CataclysmPlanner"/>
+                        <RadioButton x:Name="NavBuildPlanner"
+                                     Content="📝 Build Planner"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="BuildPlanner"/>
+                        <RadioButton x:Name="NavDepletionForecast"
+                                     Content="📉 Depletion Forecast"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="DepletionForecast"/>
+
+                        <!-- ═══ EXPLORATION ═══ -->
+                        <TextBlock Text="EXPLORATION" Style="{StaticResource NavCategoryHeaderStyle}"/>
+                        <RadioButton x:Name="NavMap"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Map">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{StaticResource MapIcon}"
+                                           FontFamily="{StaticResource IconFont}"
+                                           FontSize="16"
+                                           Foreground="{Binding RelativeSource={RelativeSource AncestorType=RadioButton}, Path=Foreground}"
+                                           Margin="0,0,8,0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="Interactive Map" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton x:Name="NavBlueprints"
+                                     Content="📘 Blueprints"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Blueprints"/>
+                        <RadioButton x:Name="NavExpansionAdvisor"
+                                     Content="🧭 Expansion Advisor"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="ExpansionAdvisor"/>
+                        <RadioButton x:Name="NavChallengeTracker"
+                                     Content="🏁 Challenge Tracker"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="ChallengeTracker"/>
+
+                        <!-- ═══ META ═══ -->
+                        <TextBlock Text="META" Style="{StaticResource NavCategoryHeaderStyle}"/>
+                        <RadioButton x:Name="NavRoadmap"
+                                     Content="🎯 Roadmap"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Roadmap"/>
+                        <RadioButton x:Name="NavSessions"
+                                     Content="📅 Sessions"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Sessions"/>
+                        <RadioButton x:Name="NavPlayStats"
+                                     Content="📊 Play Stats"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="PlayStats"/>
+                        <RadioButton x:Name="NavAchievements"
+                                     Content="🏆 Achievements"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Achievements"/>
+                        <RadioButton x:Name="NavExport"
+                                     Content="📤 Export"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Export"/>
+                        <RadioButton x:Name="NavNotifications"
+                                     Content="🔔 Notifications"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Notifications"/>
+                        <RadioButton x:Name="NavSettings"
+                                     Content="⚙️ Settings"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Settings"/>
+
+                        <!-- ═══ PREMIUM (capability-gated) ═══ -->
+                        <Border x:Name="PremiumSeparator" Height="1" Margin="12,16,12,8"
+                                Background="{StaticResource AccentGoldBrush}" Opacity="0.3"
+                                Visibility="Collapsed"/>
+                        <RadioButton x:Name="NavSaveEditor"
+                                     Content="✏️ Save Editor"
+                                     Style="{StaticResource PremiumNavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="SaveEditor"
+                                     Visibility="Collapsed"/>
+                        <RadioButton x:Name="NavSaveInspector"
+                                     Content="🔍 Save Inspector"
+                                     Style="{StaticResource PremiumNavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="SaveInspector"
+                                     Visibility="Collapsed"/>
+                        <RadioButton x:Name="NavBackupManager"
+                                     Content="💾 Backup Manager"
+                                     Style="{StaticResource PremiumNavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="BackupManager"
+                                     Visibility="Collapsed"/>
+                        <RadioButton x:Name="NavActivation"
+                                     Content="🔑 Activate Feature"
+                                     Style="{StaticResource NavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="Activation"
+                                     Visibility="Collapsed"/>
+                        <RadioButton x:Name="NavAdminPanel"
+                                     Style="{StaticResource PremiumNavButtonStyle}"
+                                     Checked="NavItem_Checked"
+                                     Tag="AdminPanel"
+                                     Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource AdminShieldIcon}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType=RadioButton}, Path=Foreground}"
+                                      Width="16" Height="16"
+                                      Margin="0,0,8,0"
+                                      Stretch="Uniform"
+                                      VerticalAlignment="Center"/>
+                                <TextBlock Text="Admin Panel" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+
+                    </StackPanel>
+                </ScrollViewer>
 
                 <!-- Status Bar -->
                 <Border Grid.Row="3" Padding="16,12" Background="{StaticResource SurfaceLightBrush}">
@@ -140,13 +315,21 @@
                                 Command="{Binding RefreshCommand}"/>
                     </StackPanel>
                 </Border>
-            </Grid>
+                </Grid>
+            </Border>
         </Border>
 
-        <!-- Main Content Area -->
-        <Border Grid.Column="1" Margin="16">
-            <ContentControl x:Name="ContentArea"/>
-        </Border>
+        <!-- Main Content Area with layered gradient background -->
+        <Grid Grid.Column="1">
+            <!-- Background layer: Radial glow -->
+            <Border Background="{StaticResource ContentGlowBrush}" Opacity="0.3"/>
+            <!-- Noise texture overlay -->
+            <Border Background="{StaticResource NoiseTextureBrush}" Opacity="0.03"/>
+            <!-- Content layer -->
+            <Border Margin="16">
+                <ContentControl x:Name="ContentArea"/>
+            </Border>
+        </Grid>
 
         <!-- Loading Overlay -->
         <Border Grid.Column="0" Grid.ColumnSpan="2"

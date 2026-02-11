@@ -1,0 +1,172 @@
+<UserControl x:Class="ArcadiaTracker.App.Views.RecordsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="900">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Personal Records" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+            <TextBlock Text="Your best achievements across all sessions"
+                       Style="{StaticResource SubheaderTextStyle}" Margin="0,0,0,24"/>
+
+            <!-- Recently Broken Records Alert -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16"
+                    Background="{StaticResource SuccessBrush}"
+                    Visibility="{Binding RecentlyBroken.Count, Converter={StaticResource IntToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="🏆 NEW RECORDS!" FontSize="16" FontWeight="Bold"
+                               Foreground="White"/>
+                    <ItemsControl ItemsSource="{Binding RecentlyBroken}" Margin="0,8,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="White" FontSize="14"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Speed Records -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="⚡ Speed Records" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <ItemsControl ItemsSource="{Binding SpeedRecords}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8"
+                                        Padding="16" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Category}"
+                                                       FontSize="14" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                <TextBlock Text="{Binding Session}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text=" · " Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding AchievedAtDisplay}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding Value}"
+                                                   FontSize="24" FontWeight="Bold"
+                                                   Foreground="{StaticResource PrimaryBrush}"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="No speed records yet"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Visibility="{Binding SpeedRecords.Count, Converter={StaticResource IntToVisibilityInverse}}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Achievement Records -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="🏆 Achievement Records" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <ItemsControl ItemsSource="{Binding AchievementRecords}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8"
+                                        Padding="16" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Category}"
+                                                       FontSize="14" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                <TextBlock Text="{Binding Session}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text=" · " Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding AchievedAtDisplay}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding Value}"
+                                                   FontSize="24" FontWeight="Bold"
+                                                   Foreground="{StaticResource SecondaryBrush}"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="No achievement records yet"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Visibility="{Binding AchievementRecords.Count, Converter={StaticResource IntToVisibilityInverse}}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Endurance Records -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="💪 Endurance Records" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <ItemsControl ItemsSource="{Binding EnduranceRecords}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8"
+                                        Padding="16" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Category}"
+                                                       FontSize="14" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                <TextBlock Text="{Binding Session}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text=" · " Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding AchievedAtDisplay}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource TextMutedBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding Value}"
+                                                   FontSize="24" FontWeight="Bold"
+                                                   Foreground="{StaticResource WarningBrush}"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="No endurance records yet"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Visibility="{Binding EnduranceRecords.Count, Converter={StaticResource IntToVisibilityInverse}}"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

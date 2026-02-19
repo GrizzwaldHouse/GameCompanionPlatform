@@ -1,0 +1,104 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Background gradient for main window -->
+    <LinearGradientBrush x:Key="BackgroundGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource BackgroundColor}" Offset="0"/>
+        <GradientStop Color="{StaticResource BackgroundGradientEnd}" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Enhanced Background Gradients & Textures       -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- Sidebar gradient with depth -->
+    <LinearGradientBrush x:Key="SidebarGradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#1A1A2E" Offset="0"/>
+        <GradientStop Color="#14141F" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Radial glow for main content area (subtle primary ambient, top-left) -->
+    <RadialGradientBrush x:Key="ContentGlowBrush" Center="0.3,0.2" RadiusX="0.7" RadiusY="0.7">
+        <GradientStop Color="#0800FFC8" Offset="0"/>
+        <GradientStop Color="#00000000" Offset="1"/>
+    </RadialGradientBrush>
+
+    <!-- Secondary radial glow (accent purple, bottom-right) -->
+    <RadialGradientBrush x:Key="ContentGlowSecondaryBrush" Center="0.8,0.9" RadiusX="0.5" RadiusY="0.5">
+        <GradientStop Color="#069C6EFF" Offset="0"/>
+        <GradientStop Color="#00000000" Offset="1"/>
+    </RadialGradientBrush>
+
+    <!-- Subtle procedural noise texture overlay -->
+    <DrawingBrush x:Key="NoiseTextureBrush" TileMode="Tile" Viewport="0,0,4,4" ViewportUnits="Absolute" Opacity="0.05">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#FFFFFF">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,0,1,1"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#FFFFFF">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="2,2,1,1"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- Scanline overlay for sci-fi CRT effect -->
+    <DrawingBrush x:Key="ScanlineOverlayBrush" TileMode="Tile"
+                  Viewport="0,0,4,4" ViewportUnits="Absolute" Opacity="0.03">
+        <DrawingBrush.Drawing>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <SolidColorBrush Color="#FFFFFF"/>
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="0,0,4,2"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- Glow shadow effects -->
+    <DropShadowEffect x:Key="PrimaryGlowEffect"
+                      Color="{StaticResource PrimaryColor}"
+                      ShadowDepth="0" BlurRadius="10" Opacity="0.4"/>
+    <DropShadowEffect x:Key="SecondaryGlowEffect"
+                      Color="{StaticResource SecondaryColor}"
+                      ShadowDepth="0" BlurRadius="10" Opacity="0.4"/>
+    <DropShadowEffect x:Key="GoldGlowEffect"
+                      Color="{StaticResource AccentGoldColor}"
+                      ShadowDepth="0" BlurRadius="10" Opacity="0.4"/>
+    <DropShadowEffect x:Key="CardShadowEffect"
+                      Color="#000000" ShadowDepth="2" BlurRadius="8" Opacity="0.3"/>
+
+    <!-- Admin status banner gradients -->
+    <LinearGradientBrush x:Key="AdminBannerActiveBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#1A2ED573" Offset="0"/>
+        <GradientStop Color="#001A1A2E" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="AdminBannerExpiredBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#1AFF4757" Offset="0"/>
+        <GradientStop Color="#001A1A2E" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="AdminBannerInactiveBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#0D606070" Offset="0"/>
+        <GradientStop Color="#001A1A2E" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Elevated card shadow for premium/featured areas -->
+    <DropShadowEffect x:Key="ElevatedCardShadowEffect"
+                      Color="#000000" ShadowDepth="4" BlurRadius="16" Opacity="0.4"/>
+
+    <!-- Gold glow with larger radius for legendary/featured items -->
+    <DropShadowEffect x:Key="GoldGlowEffectLarge"
+                      Color="{StaticResource AccentGoldColor}"
+                      ShadowDepth="0" BlurRadius="14" Opacity="0.5"/>
+
+</ResourceDictionary>
